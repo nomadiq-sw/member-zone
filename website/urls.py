@@ -4,3 +4,9 @@ from website import views
 urlpatterns = [
     path('index/', views.IndexView.as_view(), name='index'),
 ]
+
+htmx_urlpatterns = [
+    path('alt_index/', views.alt_index, name='alt-index')
+]
+
+urlpatterns += htmx_urlpatterns
