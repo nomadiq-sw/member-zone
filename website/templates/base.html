@@ -1,0 +1,40 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MemberZone</title>
+
+    <!-- Custom CSS -->
+
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.6.1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+</head>
+<body>
+
+    <div>
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <script>
+        document.body.addEventListener('htmx:configRequest', (event) => {
+            event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        })
+
+        htmx.onLoad(function(content) {
+            var sortables = content.querySelectorAll(".sortable");
+            for (var i = 0; i < sortables.length; i++) {
+              var sortable = sortables[i];
+              new Sortable(sortable, {
+                  animation: 150,
+                  ghostClass: 'blue-background-class'
+              });
+            }
+        })
+    </script>
+</body>
+</html>
