@@ -2,9 +2,9 @@
 
 {% block content %}
 
-<div hx-target="this" hx-swap="outerHTML">
-    <h2>Welcome!</h2>
-    <button hx-get="{% url 'alt-index' %}">Click me!</button>
+<div class="space-x-1 space-y-1" hx-target="this" hx-swap="outerHTML">
+    <h2 class="text-2xl font-semibold ml-2">Welcome!</h2>
+    <button class="btn btn-primary w-32" hx-get="{% url 'alt-index' %}">Click me!</button>
 </div>
 
 {% endblock content %}
