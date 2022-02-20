@@ -9,26 +9,26 @@
   <div class="navbar-center hidden lg:flex mx-auto">
     <ul class="menu menu-horizontal p-2 text-2xl">
       <li><a href="{% url 'index' %}">Home</a></li>
-      <li><a>My Memberships</a></li>
-      <li><a>Contact</a></li>
+      <li><a>Memberships</a></li>
+      <li><a>About</a></li>
     </ul>
   </div>
   <div class="navbar-end hidden lg:flex flex-1 ml-auto">
-    <a id="login-button" class="btn">Login</a>
+    <a id="login-button" class="btn w-32 mr-2">Login</a>
   </div>
   <div class="navbar-end lg:hidden">
     <div class="dropdown dropdown-end">
-      <label tabindex="0" class="btn btn-ghost btn-square">
+      <label tabindex="0" class="btn btn-ghost btn-square mr-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"/>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
       </label>
-      <ul tabindex="0" class="mt-1 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
+      <ul tabindex="0" class="mt-0 mr-2 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
         <li><a class="text-xl" href="{% url 'index' %}">Home</a></li>
-        <li><a class="text-xl">My Memberships</a></li>
-        <li><a class="text-xl">Contact</a></li>
+        <li><a class="text-xl">Memberships</a></li>
+        <li><a class="text-xl">About</a></li>
         <li class="divider"></li>
-        <li class="font-bold"><a class="text-xl">Login</a></li>
+        <li><a class="text-xl font-bold">Login</a></li>
       </ul>
     </div>
   </div>

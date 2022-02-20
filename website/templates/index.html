@@ -2,5 +2,57 @@
 {% load static %}
 
 {% block content %}
-    {% include 'partials/navbar.html' %}
+  {% include 'partials/navbar.html' %}
+  <div class="card items-center pt-8">
+    <table class="table table-fixed lg:w-1/2 w-full">
+      <!-- head -->
+      <thead>
+        <tr>
+          <th class="pl-2 text-left">Membership</th>
+          <th class="p-0">Subscription</th>
+          <th class="p-0">Renewal</th>
+          <th class="p-0 w-1/5">Cost</th>
+        </tr>
+      </thead>
+      <tbody class="flex-1 sm:flex-none">
+        <!-- row 1 -->
+        <tr>
+          <th class="pl-2 truncate text-left">Netflix</th>
+          <td class="p-0">Monthly</td>
+          <td class="p-0">01/03/2022</td>
+          <td class="p-0">$14.99</td>
+        </tr>
+        <!-- row 2 -->
+        <tr>
+          <th class="pl-2 truncate text-left">NordVPN</th>
+          <td class="p-0">Monthly</td>
+          <td class="p-0">15/03/2022</td>
+          <td class="p-0">$9.99</td>
+        </tr>
+        <!-- row 3 -->
+        <tr>
+          <th class="pl-2 truncate text-left">LA Fitness</th>
+          <td class="p-0">Annual</td>
+          <td class="p-0">26/12/2022</td>
+          <td class="p-0">$580.00</td>
+        </tr>
+        <!-- row 4 -->
+        <tr>
+          <th class="pl-2 truncate text-left">Fight Club</th>
+          <td class="p-0">Lifetime</td>
+          <td class="p-0">--</td>
+          <td class="p-0">$999.99</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="card-body items-center text-center -mt-2">
+      <p class="text-lg font-semibold">
+        Keep track of all your memberships and subscriptions in one place.<br/>
+        Get reminders to cancel your free trials before they lapse!
+      </p>
+      <div class="mt-2 card-actions">
+        <button class="btn btn-primary">Get Started</button>
+      </div>
+    </div>
+  </div>
 {% endblock content %}
