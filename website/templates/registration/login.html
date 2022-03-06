@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% load tailwind_filters %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="flex w-screen justify-center">
+  <div class="grid grid-rows-9 lg:grid-cols-9 lg:grid-rows-1 pt-8 place-items-center">
+    <div class="card h-full w-full rounded-xl border border-gray-600 border-solid place-items-center row-span-4 lg:col-span-4">
+      <p class="p-4 text-center">Please <strong>login</strong> with your e-mail address<br/>and password to access your memberships</p>
+      <form class="p-4 w-full" method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {{ login_form|crispy }}
+        <div class="card-actions mt-4">
+          <input class="btn" type="submit" name="submit" value="Login">
+        </div>
+      </form>
+    </div>
+    <div class="divider lg:divider-horizontal font-bold">OR</div>
+    <div class="card h-full w-full rounded-xl border border-gray-600 border-solid place-items-center row-span-4 lg:col-span-4">
+      <p class="p-4 text-center">Please <strong>register</strong> with your<br/>e-mail address and password</p>
+      <form class="p-4 w-full" method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {{ register_form|crispy }}
+        <div class="card-actions mt-4">
+          <input class="btn" type="submit" name="submit" value="Register">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

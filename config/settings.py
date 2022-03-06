@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
@@ -37,6 +38,8 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'django_htmx',
+    'crispy_forms',
+    'crispy_tailwind',
     'django_browser_reload',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -92,6 +95,7 @@ DATABASES = {
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+AUTH_USER_MODEL = 'website.SiteUser'
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -108,6 +112,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGOUT_REDIRECT_URL = '/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -122,10 +127,14 @@ USE_L10N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = 'tailwind'
+CRISPY_TEMPLATE_PACK = 'tailwind'
+
 TAILWIND_APP_NAME = 'theme'
+
 STATIC_URL = '/static/'
 
 # Default primary key field type

@@ -9,12 +9,16 @@
   <div class="navbar-center hidden lg:flex mx-auto">
     <ul class="menu menu-horizontal p-2 text-2xl">
       <li><a href="{% url 'index' %}">Home</a></li>
-      <li><a>Memberships</a></li>
+      <li><a href="{% url 'my-memberships' %}">Memberships</a></li>
       <li><a>About</a></li>
     </ul>
   </div>
   <div class="navbar-end hidden lg:flex flex-1 ml-auto">
-    <a id="login-button" class="btn border-0 bg-blue-600 w-24 mr-2">Login</a>
+    {% if user.is_authenticated %}
+      <a id="login-button" href="{% url 'logout' %}" class="btn border-0 w-24 mr-2">Logout</a>
+    {% else %}
+      <a id="login-button" href="{% url 'login' %}" class="btn border-0 bg-blue-600 w-24 mr-2">Login</a>
+    {% endif %}
   </div>
   <div class="navbar-end lg:hidden">
     <div class="dropdown dropdown-end">
@@ -25,10 +29,14 @@
       </label>
       <ul tabindex="0" class="mt-0 mr-2 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
         <li><a class="text-xl" href="{% url 'index' %}">Home</a></li>
-        <li><a class="text-xl">Memberships</a></li>
+        <li><a class="text-xl" href="{% url 'my-memberships' %}">Memberships</a></li>
         <li><a class="text-xl">About</a></li>
         <li class="divider"></li>
-        <li><a class="text-xl font-bold">Login</a></li>
+        {% if user.is_authenticated %}
+          <li><a href="{% url 'logout' %}" class="text-xl font-bold">Logout</a></li>
+        {% else %}
+          <li><a href="{% url 'login' %}" class="text-xl font-bold">Login</a></li>
+        {% endif %}
       </ul>
     </div>
   </div>

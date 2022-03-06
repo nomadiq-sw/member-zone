@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block content %}
-  {% include 'partials/navbar.html' %}
   <div class="card items-center pt-8">
     <table class="table table-fixed lg:w-1/2 w-full">
       <!-- head -->
@@ -51,7 +50,11 @@
         Get reminders to cancel your free trials before they lapse!
       </p>
       <div class="card-actions mt-2">
-        <button class="btn border-0 bg-blue-600">Get Started</button>
+        {% if user.is_authenticated %}
+          <a href="{% url 'my-memberships' %}" class="btn border-0 bg-blue-600">Get Started</a>
+        {% else %}
+          <a href="{% url 'login' %}" class="btn border-0 bg-blue-600">Get Started</a>
+        {% endif %}
       </div>
     </div>
   </div>
