@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="flex w-screen justify-center">
-  <div class="grid grid-rows-9 lg:grid-cols-9 lg:grid-rows-1 pt-8 place-items-center">
+  <div class="w-7/8 max-w-xs lg:w-1/2 lg:max-w-none grid grid-rows-9 lg:grid-cols-9 lg:grid-rows-1 pt-8 place-items-center">
     <div class="card h-full w-full rounded-xl border border-gray-600 border-solid place-items-center row-span-4 lg:col-span-4">
       <p class="p-4 text-center">Please <strong>login</strong> with your e-mail address<br/>and password to access your memberships</p>
       <form class="p-4 w-full" method="post" action="{% url 'login' %}">
