@@ -100,6 +100,9 @@ AUTH_USER_MODEL = 'website.SiteUser'
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        'OPTIONS': {
+            'max_similarity': 0.5,  # Default of 0.7 is too weak, allows password very similar to email in some cases
+        }
     },
     {
         'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
