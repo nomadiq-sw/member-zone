@@ -5,6 +5,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from website.models import SiteUser
 
 
 # Create your tests here.
@@ -12,13 +13,12 @@ from selenium.webdriver.support import expected_conditions as ec
 class TestUserRegistrationFormErrors(LiveServerTestCase):
 
     def setUp(self):
+        self.driver.get(self.live_server_url+'/memberships/login')
         self.delay = 1
         try:
             WebDriverWait(self.driver, self.delay) \
                 .until(ec.presence_of_element_located((By.ID, 'id_email')))
             self.new_user_email = self.driver.find_element(By.ID, 'id_email')
-            self.new_user_email.send_keys(Keys.CONTROL + "a")
-            self.new_user_email.send_keys(Keys.BACKSPACE)
             WebDriverWait(self.driver, self.delay) \
                 .until(ec.presence_of_element_located((By.ID, 'id_password1')))
             self.new_user_pwd1 = self.driver.find_element(By.ID, 'id_password1')
@@ -33,6 +33,7 @@ class TestUserRegistrationFormErrors(LiveServerTestCase):
             assert False
 
     def test_registration_existing_user(self):
+        SiteUser.objects.create_user(email="juan.gomez@realtalk.com", password="PwdForTest1")
         self.new_user_email.send_keys("juan.gomez@realtalk.com")
         self.new_user_pwd1.send_keys("PwdForTest1")
         self.new_user_pwd2.send_keys("PwdForTest1")
@@ -54,7 +55,7 @@ class TestUserRegistrationFormErrors(LiveServerTestCase):
         self.check_string_in_pwd_err("The password is too similar to the email.")
 
     def test_registration_pwd_too_short(self):
-        self.new_user_email.send_keys("j.gomez@realtalk.com")
+        self.new_user_email.send_keys("pedro.gomez@realtalk.com")
         self.new_user_pwd1.send_keys("nvjdia0")
         self.new_user_pwd2.send_keys("nvjdia0")
         self.register.send_keys(Keys.ENTER)
@@ -101,3 +102,28 @@ class TestUserRegistrationFormErrors(LiveServerTestCase):
             print("Test case took too long!")
             assert False
 
+
+@pytest.mark.usefixtures('setup')
+class TestRegistrationFormSuccess(LiveServerTestCase):
+
+    def setUp(self):
+        self.driver.get(self.live_server_url+'/memberships/login')
+
+    def test_new_user_success(self):
+        self.new_user_email = self.driver.find_element(By.ID, 'id_email')
+        self.new_user_pwd1 = self.driver.find_element(By.ID, 'id_password1')
+        self.new_user_pwd2 = self.driver.find_element(By.ID, 'id_password2')
+        self.register = self.driver.find_element(By.XPATH, ".//input[@value='Register' and @type='submit']")
+
+        self.new_user_email.send_keys("pedro.gomez@realtalk.com")
+        self.new_user_pwd1.send_keys("86743909dba")
+        self.new_user_pwd2.send_keys("86743909dba")
+        self.register.send_keys(Keys.ENTER)
+
+        try:
+            WebDriverWait(self.driver, 2)\
+                .until(ec.url_matches(self.live_server_url+'/memberships/my-memberships'))
+        except TimeoutException:
+            print("New user creation failed!")
+        finally:
+            self.assertURLEqual(self.driver.current_url, self.live_server_url+'/memberships/my-memberships/')
