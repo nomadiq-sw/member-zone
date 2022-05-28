@@ -1,10 +1,18 @@
-from django.http import HttpResponseRedirect
+from django.template.loader import get_template
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
-from django.contrib.auth import login
 from django.views.generic import View, TemplateView
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core.mail import BadHeaderError, send_mail
+from django.contrib.auth import login
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import PasswordResetForm
+from django.contrib.auth.tokens import default_token_generator
+from django.db.models.query_utils import Q
 from .forms import UserRegistrationForm, UserLoginForm
+from .models import SiteUser
 
 
 # Create your views here.
@@ -37,7 +45,7 @@ class LoginSignupView(View):
             context = {'register_form': register_form, 'login_form': UserLoginForm()}
             return render(request, 'registration/login.html', context)
 
-        elif request.POST.get('submit') == 'Login':
+        elif request.POST.get('submit') == 'Log in':
             login_form = UserLoginForm(data=request.POST)
             if login_form.is_valid():
                 login(request, login_form.get_user())
@@ -46,3 +54,39 @@ class LoginSignupView(View):
             return render(request, 'registration/login.html', context)
 
         return HttpResponseRedirect(reverse('login'))
+
+
+class PasswordResetView(View):
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            return HttpResponseRedirect(reverse('logout'))
+        pwd_reset_form = PasswordResetForm()
+        return render(request, 'registration/password_reset.html', context={'password_reset_form': pwd_reset_form})
+
+    def post(self, request):
+        password_reset_form = PasswordResetForm(request.POST)
+        if password_reset_form.is_valid():
+            email = password_reset_form.cleaned_data['email']
+            users = SiteUser.objects.filter(Q(email=email))
+            if users.exists():
+                for user in users:
+                    subject = "Password Reset Requested"
+                    html_temp = get_template('registration/password_reset_email.html')
+                    c = {
+                        "email": user.email,
+                        'domain': '127.0.0.1:8000',
+                        'site_name': 'MemberZone',
+                        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                        "user": user,
+                        'token': default_token_generator.make_token(user),
+                        'protocol': 'http',
+                    }
+                    html_content = html_temp.render(c)
+                    try:
+                        send_mail(subject, html_content, "admin@member-zone.com", [user.email], fail_silently=False)
+                        return HttpResponseRedirect(reverse('password-reset-done'))
+                    except BadHeaderError:
+                        return HttpResponse('Invalid header found.')
+        else:
+            return HttpResponseRedirect(reverse('login'))

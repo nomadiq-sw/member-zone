@@ -81,6 +81,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -101,7 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
         'OPTIONS': {
-            'max_similarity': 0.5,  # Default of 0.7 is too weak, allows password very similar to email in some cases
+            'max_similarity': 0.6,  # Default of 0.7 is too weak, allows password very similar to email in some cases
         }
     },
     {

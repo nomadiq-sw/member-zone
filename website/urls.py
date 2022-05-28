@@ -1,13 +1,19 @@
-from django.urls import path
-from django.contrib.auth.views import LogoutView
+from django.urls import path, reverse_lazy
+import django.contrib.auth.views as auth_views
 from website import views
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='home'),
-    path('index/', views.IndexView.as_view(), name='index'),
+    path('index', views.IndexView.as_view(), name='index'),
     path('memberships/login', views.LoginSignupView.as_view(), name='login'),
-    path('memberships/logout', LogoutView.as_view(), name='logout'),
-    path('memberships/my-memberships/', views.MembershipView.as_view(), name='my-memberships'),
+    path('memberships/logout', auth_views.LogoutView.as_view(), name='logout'),
+    path('password-reset', views.PasswordResetView.as_view(), name='password-reset'),
+    path('password-reset/done', auth_views.PasswordResetDoneView.as_view(), name='password-reset-done'),
+    path('password-reset/<uidb64>/<token>',
+         auth_views.PasswordResetConfirmView.as_view(success_url=reverse_lazy('password-reset-complete')),
+         name='password-reset-confirm'),
+    path('password-reset/complete', auth_views.PasswordResetCompleteView.as_view(), name='password-reset-complete'),
+    path('memberships/my-memberships', views.MembershipView.as_view(), name='my-memberships'),
 ]
 
 htmx_urlpatterns = []
