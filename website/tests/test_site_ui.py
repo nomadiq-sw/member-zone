@@ -1,10 +1,14 @@
 import pytest
+import re
 from django.test import LiveServerTestCase
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.core import mail
 from website.models import SiteUser
 
 
@@ -108,7 +112,7 @@ class TestUserRegistrationFormSuccess(LiveServerTestCase):
         except TimeoutException:
             print("New user creation failed!")
         finally:
-            self.assertURLEqual(self.driver.current_url, self.live_server_url+'/memberships/my-memberships/')
+            self.assertURLEqual(self.driver.current_url, self.live_server_url+'/memberships/my-memberships')
 
 
 @pytest.mark.usefixtures('setup')
@@ -119,7 +123,7 @@ class TestUserLoginFormErrors(LiveServerTestCase):
         self.driver.get(self.live_server_url+'/memberships/login')
         self.user_email = self.driver.find_element(By.ID, 'id_username')
         self.user_pwd = self.driver.find_element(By.ID, 'id_password')
-        self.login = self.driver.find_element(By.XPATH, ".//input[@value='Login' and @type='submit']")
+        self.login = self.driver.find_element(By.XPATH, ".//input[@value='Log in' and @type='submit']")
 
     def test_login_invalid_email(self):
         self.user_email.send_keys("juan.gomez@realtalk.com")
@@ -162,7 +166,7 @@ class TestUserLoginFormSuccess(LiveServerTestCase):
         self.driver.get(self.live_server_url+'/memberships/login')
         self.user_email = self.driver.find_element(By.ID, 'id_username')
         self.user_pwd = self.driver.find_element(By.ID, 'id_password')
-        self.login = self.driver.find_element(By.XPATH, ".//input[@value='Login' and @type='submit']")
+        self.login = self.driver.find_element(By.XPATH, ".//input[@value='Log in' and @type='submit']")
 
     def test_user_login_success(self):
         SiteUser.objects.create_user(email="juan.gomez@realtalk.com", password="PwdForTest1")
@@ -176,4 +180,73 @@ class TestUserLoginFormSuccess(LiveServerTestCase):
         except TimeoutException:
             print("User login failed!")
         finally:
-            self.assertURLEqual(self.driver.current_url, self.live_server_url+'/memberships/my-memberships/')
+            self.assertURLEqual(self.driver.current_url, self.live_server_url+'/memberships/my-memberships')
+
+
+@pytest.mark.usefixtures('setup')
+class TestPasswordResetForm(LiveServerTestCase):
+
+    def setUp(self):
+        self.driver.get(self.live_server_url+'/password-reset')
+        self.reset_email = self.driver.find_element(By.ID, 'id_email')
+        self.reset_button = self.driver.find_element(By.XPATH, ".//input[@value='Reset password' and @type='submit']")
+
+    def test_reset_password_valid_email(self):
+        SiteUser.objects.create_user(email="juan.gomez@realtalk.com", password="PwdForTest1")
+        self.reset_email.send_keys("juan.gomez@realtalk.com")
+        self.reset_button.send_keys(Keys.ENTER)
+
+        try:
+            WebDriverWait(self.driver, 2)\
+                .until(ec.url_matches(self.live_server_url+'/password-reset/done'))
+        except TimeoutException:
+            print("Password reset failed!")
+        finally:
+            self.assertURLEqual(self.driver.current_url, self.live_server_url+'/password-reset/done')
+            self.assertEqual(len(mail.outbox), 1)
+            self.assertEqual(mail.outbox[0].subject, "Password Reset Requested")
+            email_content = mail.outbox[0].body
+            user = SiteUser.objects.get(email="juan.gomez@realtalk.com")
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            uid_token_regex = r"password-reset\/"+re.escape(uid)+r"\/([A-Za-z0-9:\-]+)"
+            match = re.search(uid_token_regex, email_content)
+            assert match, "UID and token not found in email"
+            token = match.group(1)
+
+            self.driver.get(self.live_server_url+'/password-reset/'+uid+'/'+token)
+            try:
+                WebDriverWait(self.driver, 2) \
+                    .until(ec.url_matches(self.live_server_url+'/password-reset/'+uid+'/set-password'))
+            except TimeoutException:
+                print("Redirect to password reset page failed!")
+            finally:
+                self.assertURLEqual(self.driver.current_url,
+                                    self.live_server_url+'/password-reset/'+uid+'/set-password')
+                new_pwd1 = self.driver.find_element(By.ID, 'id_new_password1')
+                new_pwd2 = self.driver.find_element(By.ID, 'id_new_password2')
+                set_pwd = self.driver.find_element(By.XPATH, ".//input[@value='Change password' and @type='submit']")
+                new_pwd1.send_keys("PwdForTest2")
+                new_pwd2.send_keys("PwdForTest2")
+                set_pwd.send_keys(Keys.ENTER)
+                try:
+                    WebDriverWait(self.driver, 2) \
+                        .until(ec.url_matches(self.live_server_url+'/password-reset/complete'))
+                except TimeoutException:
+                    print("Updating password failed!")
+                finally:
+                    self.assertURLEqual(self.driver.current_url,
+                                        self.live_server_url+'/password-reset/complete')
+                    user = SiteUser.objects.get(email="juan.gomez@realtalk.com")
+                    assert user.check_password("PwdForTest2")
+
+    def test_reset_password_invalid_email(self):
+        self.reset_email.send_keys("juan.gomez@realtalk.com")
+        self.reset_button.send_keys(Keys.ENTER)
+
+        try:
+            WebDriverWait(self.driver, 2)\
+                .until(ec.url_matches(self.live_server_url+'/password-reset/invalid'))
+        except TimeoutException:
+            print("Password reset invalidation failed!")
+        finally:
+            self.assertURLEqual(self.driver.current_url, self.live_server_url+'/password-reset/invalid')

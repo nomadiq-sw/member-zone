@@ -84,9 +84,11 @@ class PasswordResetView(View):
                     }
                     html_content = html_temp.render(c)
                     try:
-                        send_mail(subject, html_content, "admin@member-zone.com", [user.email], fail_silently=False)
+                        send_mail(subject, html_content, "admin@member-zone.com", [user.email])
                         return HttpResponseRedirect(reverse('password-reset-done'))
                     except BadHeaderError:
                         return HttpResponse('Invalid header found.')
+            else:
+                return HttpResponseRedirect(reverse('password-reset-invalid'))
         else:
             return HttpResponseRedirect(reverse('login'))
