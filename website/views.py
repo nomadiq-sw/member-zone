@@ -41,7 +41,20 @@ class LoginSignupView(View):
                 user = register_form.save()
                 if user is not None and user.is_active:
                     login(request, user)
-                    return HttpResponseRedirect(reverse('my-memberships'))
+                    subject = "Welcome to MemberZone"
+                    html_temp = get_template('registration/user_welcome_email.html')
+                    c = {
+                        "email": user.email,
+                        'domain': '127.0.0.1:8000',
+                        'site_name': 'MemberZone',
+                        'protocol': 'http',
+                    }
+                    html_content = html_temp.render(c)
+                    try:
+                        send_mail(subject, html_content, "admin@member-zone.com", [user.email])
+                        return HttpResponseRedirect(reverse('my-memberships'))
+                    except BadHeaderError:
+                        return HttpResponse('Invalid header found.')
             context = {'register_form': register_form, 'login_form': UserLoginForm()}
             return render(request, 'registration/login.html', context)
 
@@ -71,7 +84,7 @@ class PasswordResetView(View):
             users = SiteUser.objects.filter(Q(email=email))
             if users.exists():
                 for user in users:
-                    subject = "Password Reset Requested"
+                    subject = "Password reset requested"
                     html_temp = get_template('registration/password_reset_email.html')
                     c = {
                         "email": user.email,

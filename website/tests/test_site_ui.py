@@ -113,6 +113,8 @@ class TestUserRegistrationFormSuccess(LiveServerTestCase):
             print("New user creation failed!")
         finally:
             self.assertURLEqual(self.driver.current_url, self.live_server_url+'/memberships/my-memberships')
+            self.assertEqual(len(mail.outbox), 1)
+            self.assertEqual(mail.outbox[0].subject, "Welcome to MemberZone")
 
 
 @pytest.mark.usefixtures('setup')
@@ -204,7 +206,7 @@ class TestPasswordResetForm(LiveServerTestCase):
         finally:
             self.assertURLEqual(self.driver.current_url, self.live_server_url+'/password-reset/done')
             self.assertEqual(len(mail.outbox), 1)
-            self.assertEqual(mail.outbox[0].subject, "Password Reset Requested")
+            self.assertEqual(mail.outbox[0].subject, "Password reset requested")
             email_content = mail.outbox[0].body
             user = SiteUser.objects.get(email="juan.gomez@realtalk.com")
             uid = urlsafe_base64_encode(force_bytes(user.pk))
