@@ -1,12 +1,14 @@
 from django.db import models
+from djmoney.models import fields
+from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 
 # Create your models here.
 class SiteUserManager(BaseUserManager):
     """
-    Custom user model manager where email is the unique identifiers
-    for authentication instead of usernames.
+    Custom user model manager where email is the unique identifier
+    for authentication instead of username.
     """
     def create_user(self, email, password, **extra_fields):
         """
@@ -36,6 +38,10 @@ class SiteUserManager(BaseUserManager):
 
 
 class SiteUser(AbstractUser):
+    """
+    Custom user model where email is the unique identifier
+    for authentication instead of username.
+    """
     username = None
     email = models.EmailField('email', unique=True)
 
@@ -46,3 +52,34 @@ class SiteUser(AbstractUser):
 
     def __str__(self):
         return self.email
+
+
+class Membership(models.Model):
+    """
+    Model for membership or subscription
+    """
+    MemberPeriod = [
+        ('WEEKLY', _("Weekly")),
+        ('MONTHLY', _("Monthly")),
+        ('ANNUAL', _("Annual")),
+        ('FIXED', _("Fixed-term")),
+        ('LIFETIME', _("Lifetime")),
+        ('CUSTOM', _("Custom"))
+    ]
+
+    user = models.ForeignKey(SiteUser, on_delete=models.CASCADE)
+    membership_name = models.CharField(max_length=20)
+    website_link = models.URLField(blank=True)
+    membership_number = models.CharField(blank=True, max_length=30)
+    membership_type = models.CharField(choices=MemberPeriod, default='MONTHLY', max_length=8)
+    custom_period = models.DurationField(blank=True, null=True)  # Required if period = CUSTOM
+    renewal_date = models.DateField(blank=True, null=True)  # Required unless period = LIFETIME
+    minimum_term = models.DateField(blank=True, null=True)
+    free_trial_expiry = models.DateField(blank=True, null=True)
+    reminder = models.BooleanField(default=False)
+    cost = fields.MoneyField(
+        decimal_places=2,
+        default=0,
+        default_currency='USD',
+        max_digits=11
+    )

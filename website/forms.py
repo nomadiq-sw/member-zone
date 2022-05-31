@@ -1,10 +1,11 @@
+import datetime
 from django import forms
 from django.contrib.auth import authenticate
+from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html, format_html_join
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.safestring import mark_safe
-
-from .models import SiteUser
+from .models import SiteUser, Membership
 
 help_texts = ("different from your email",
               "at least 8 characters",
@@ -12,8 +13,8 @@ help_texts = ("different from your email",
               "not entirely numeric")
 
 help_items = format_html(
-    mark_safe("Your password must be:<ul>{}</ul>"),
-    format_html_join('', "<li>&nbsp;&nbsp;-&nbsp;{}</li>", ((text,) for text in help_texts))
+    mark_safe(_("Your password must be:<ul>{}</ul>")),
+    format_html_join('', "<li>&nbsp;&nbsp;-&nbsp;{}</li>", ((_(text),) for text in help_texts))
 )
 
 
@@ -28,7 +29,7 @@ class UserRegistrationForm(UserCreationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['password1'].help_text = help_items
-        self.fields['password2'].help_text = "Enter the same password again, for validation"
+        self.fields['password2'].help_text = _("Enter the same password again, for validation")
 
     def save(self, commit=True):
         user = super(UserRegistrationForm, self).save(commit=False)
@@ -40,8 +41,8 @@ class UserRegistrationForm(UserCreationForm):
 
 
 class UserLoginForm(AuthenticationForm):
-    message_incorrect_login = "Incorrect email or password. Please try again."
-    message_user_inactive = "Your account is inactive. Please contact the site administrator."
+    message_incorrect_login = _("Incorrect email or password. Please try again.")
+    message_user_inactive = _("Your account is inactive. Please contact the site administrator.")
 
     class Meta:
         model = SiteUser
@@ -58,3 +59,40 @@ class UserLoginForm(AuthenticationForm):
             if not self.user_cache.is_active:
                 raise forms.ValidationError(self.message_user_inactive)
         return self.cleaned_data
+
+
+class MembershipEditForm(forms.ModelForm):
+
+    class Meta:
+        model = Membership
+        exclude = ['user']
+
+    def clean(self):
+        cleaned_data = super().clean()
+        mem_type = cleaned_data.get('membership_type')
+        date = cleaned_data.get('renewal_date')
+        period = cleaned_data.get('custom_period')
+
+        if mem_type != 'LIFETIME' and date is None:
+            raise forms.ValidationError(
+                _("You have selected a %(type) membership but have not set a renewal date."),
+                params={'type': mem_type},
+                code="missing date"
+            )
+        elif mem_type != 'LIFETIME':
+            self.present_or_future_date("renewal", date)
+
+        if mem_type == 'CUSTOM' and period is None:
+            raise forms.ValidationError(
+                _("You have selected a CUSTOM membership but have not set a custom period"),
+                code="missing date"
+            )
+
+    @staticmethod
+    def present_or_future_date(field, date):
+        if date < datetime.date.today():
+            raise forms.ValidationError(
+                _("The %(field) date cannot be in the past!"),
+                params={'field': field},
+                code="invalid date"
+            )
