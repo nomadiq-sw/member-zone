@@ -2,5 +2,29 @@
 {% load static %}
 
 {% block content %}
-  <h1 class="text-xl font-bold">Login successful, here are your memberships</h1>
+    <div class="card items-center pt-8">
+      <h2 class="text-xl text-center w-3/4">Welcome to MemberZone, here are your memberships.</h2>
+      <div class="divider w-1/2 mx-auto"></div>
+      <table class="table table-fixed w-full lg:w-1/2">
+        <!-- head -->
+        <thead>
+          <tr>
+            <th scope="col" class="pl-2 text-left">Membership</th>
+            <th scope="col" class="p-0">Subscription</th>
+            <th scope="col" class="p-0 hidden sm:table-cell">Renewal</th>
+            <th scope="col" class="p-0 hidden sm:table-cell w-1/6">Cost</th>
+            <th scope="col" class="p-0 w-1/5 sm:w-1/6">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="flex-1 sm:flex-none">
+          <tr>
+            <th class="pl-2 truncate text-left">Memb. name</th>
+            <td class="p-0">Sub. type</td>
+            <td class="p-0 hidden sm:table-cell">Renew date</td>
+            <td class="p-0 hidden sm:table-cell">Price</td>
+            <td class="p-0">Edit/Del.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 {% endblock %}
