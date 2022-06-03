@@ -85,7 +85,7 @@ class MembershipEditForm(forms.ModelForm):
         if mem_type == 'CUSTOM' and period is None:
             raise forms.ValidationError(
                 _("You have selected a CUSTOM membership but have not set a custom period"),
-                code="missing date"
+                code="incomplete"
             )
 
     @staticmethod
