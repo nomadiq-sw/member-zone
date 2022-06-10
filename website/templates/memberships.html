@@ -1,5 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load djmoney %}
+{% load tailwind_filters %}
+{% load crispy_forms_tags %}
+
+{% money_localize money %}
 
 {% block content %}
     <div class="card items-center pt-8">
@@ -28,16 +33,18 @@
             </tr>
           </tbody>
         </table>
-        <a href="#modal-form" class="mx-auto md:ml-2 btn btn-square bg-blue-600 border-0 basis-14">NEW</a>
+        <a href="#modal-form" class="mx-auto md:ml-2 btn btn-square bg-blue-600 border-none basis-14">NEW</a>
       </div>
     </div>
 
 <div class="modal" id="modal-form">
-  <div class="modal-box">
+  <div class="modal-box p-4 scrollbar-thin">
+    <a href="#" class="btn btn-sm btn-circle absolute right-2 top-2">✕</a>
     <h3 class="font-bold text-lg">New membership</h3>
-    <p class="py-4">Fill in the details of your subscription below</p>
+    <p class="py-4">Enter the details of your subscription below</p>
+    {{ form|crispy }}
     <div class="modal-action">
-      <a href="#" class="btn">Save</a>
+     <a href="#" class="btn bg-blue-600 border-none">SAVE</a>
     </div>
   </div>
 </div>

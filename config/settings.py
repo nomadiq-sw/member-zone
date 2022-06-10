@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'djmoney',
 ]
 
 MIDDLEWARE = [
@@ -130,6 +131,15 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+CURRENCIES = ('EUR', 'GBP', 'CHF', 'NOK', 'SEK', 'DKK', 'CZK', 'PLN', 'RON',
+              'TRY', 'RUB',
+              'USD', 'CAD', 'MXN', 'BRL', 'ARS', 'CLP', 'COP', 'VEF',
+              'AUD', 'NZD',
+              'INR', 'JPY', 'CNY', 'KRW', 'HKD', 'MYR', 'IDR', 'PHP', 'SGD', 'TWD', 'THB', 'VND', 'PKR', 'BDT',
+              'SAR', 'AED', 'ILS', 'IRR',
+              'ZAR', 'EGP', 'NGN')  # List based on 50 largest economies according to worlddata.info
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

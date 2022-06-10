@@ -11,7 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models.query_utils import Q
-from .forms import UserRegistrationForm, UserLoginForm
+from .forms import UserRegistrationForm, UserLoginForm, MembershipEditForm
 from .models import SiteUser
 
 
@@ -23,6 +23,7 @@ class IndexView(TemplateView):
 class MembershipView(LoginRequiredMixin, TemplateView):
     login_url = reverse_lazy('login')
     template_name = 'memberships.html'
+    extra_context = {'form': MembershipEditForm()}
 
 
 class LoginSignupView(View):
