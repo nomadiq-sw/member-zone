@@ -5,6 +5,8 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html, format_html_join
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.safestring import mark_safe
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Field, Fieldset, ButtonHolder, Submit, Row, Column, Div
 from .models import SiteUser, Membership
 
 help_texts = ("different from your email",
@@ -66,23 +68,33 @@ class MembershipEditForm(forms.ModelForm):
     class Meta:
         model = Membership
         exclude = ['user']
+        widgets = {
+            'renewal_date': forms.widgets.DateInput(attrs={'type': 'date'}),
+            'minimum_term': forms.widgets.DateInput(attrs={'type': 'date'}),
+            'free_trial_expiry': forms.widgets.DateInput(attrs={'type': 'date'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ""
 
     def clean(self):
         cleaned_data = super().clean()
         mem_type = cleaned_data.get('membership_type')
-        date = cleaned_data.get('renewal_date')
-        period = cleaned_data.get('custom_period')
+        renew_date = cleaned_data.get('renewal_date')
+        cust_period = cleaned_data.get('custom_period')
+        cust_unit = cleaned_data.get('custom_unit')
 
-        if mem_type != 'LIFETIME' and date is None:
+        if mem_type != 'LIFETIME' and renew_date is None:
             raise forms.ValidationError(
                 _("You have selected a %(type) membership but have not set a renewal date."),
                 params={'type': mem_type},
-                code="missing date"
+                code="incomplete"
             )
         elif mem_type != 'LIFETIME':
-            self.present_or_future_date("renewal", date)
+            self.present_or_future_date("renewal", renew_date)
 
-        if mem_type == 'CUSTOM' and period is None:
+        if mem_type == 'CUSTOM' and (cust_period is None or cust_unit is None):
             raise forms.ValidationError(
                 _("You have selected a CUSTOM membership but have not set a custom period"),
                 code="incomplete"
@@ -94,5 +106,5 @@ class MembershipEditForm(forms.ModelForm):
             raise forms.ValidationError(
                 _("The %(field) date cannot be in the past!"),
                 params={'field': field},
-                code="invalid date"
+                code="invalid"
             )

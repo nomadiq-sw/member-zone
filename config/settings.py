@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'django_htmx',
+    'widget_tweaks',
     'crispy_forms',
     'crispy_tailwind',
     'django_browser_reload',
@@ -140,11 +141,23 @@ CURRENCIES = ('EUR', 'GBP', 'CHF', 'NOK', 'SEK', 'DKK', 'CZK', 'PLN', 'RON',
               'SAR', 'AED', 'ILS', 'IRR',
               'ZAR', 'EGP', 'NGN')  # List based on 50 largest economies according to worlddata.info
 
+CURRENCY_CHOICES = [('EUR', 'EUR'), ('GBP', 'GBP'), ('CHF', 'CHF'), ('NOK', 'NOK'), ('SEK', 'SEK'), ('DKK', 'DKK'),
+                    ('CZK', 'CZK'), ('PLN', 'PLN'), ('RON', 'RON'),
+                    ('TRY', 'TRY'), ('RUB', 'RUB'),
+                    ('USD', 'USD'), ('CAD', 'CAD'), ('MXN', 'MXN'), ('BRL', 'BRL'), ('ARS', 'ARS'), ('CLP', 'CLP'),
+                    ('COP', 'COP'), ('VEF', 'VEF'),
+                    ('AUD', 'AUD'), ('NZD', 'NZD'),
+                    ('INR', 'INR'), ('JPY', 'JPY'), ('CNY', 'CNY'), ('KRW', 'KRW'), ('HKD', 'HKD'), ('MYR', 'MYR'),
+                    ('IDR', 'IDR'), ('PHP', 'PHP'), ('SGD', 'SGD'),
+                    ('TWD', 'TWD'), ('THB', 'THB'), ('VND', 'VND'), ('PKR', 'PKR'), ('BDT', 'BDT'),
+                    ('SAR', 'SAR'), ('AED', 'AED'), ('ILS', 'ILS'), ('IRR', 'IRR'),
+                    ('ZAR', 'ZAR'), ('EGP', 'EGP'), ('NGN', 'NGN')]
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-CRISPY_ALLOWED_TEMPLATE_PACKS = 'tailwind'
+CRISPY_ALLOWED_TEMPLATE_PACKS = ('tailwind',)
 CRISPY_TEMPLATE_PACK = 'tailwind'
 
 TAILWIND_APP_NAME = 'theme'

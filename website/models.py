@@ -67,16 +67,24 @@ class Membership(models.Model):
         ('CUSTOM', _("Custom"))
     ]
 
+    CustomUnit = [
+        ('DAY', _("Days")),
+        ('WEEK', _("Weeks")),
+        ('MONTH', _("Months")),
+        ('YEAR', _("Years"))
+    ]
+
     user = models.ForeignKey(SiteUser, on_delete=models.CASCADE)
     membership_name = models.CharField(max_length=20)
     website_link = models.URLField(blank=True)
     membership_number = models.CharField(blank=True, max_length=30)
     membership_type = models.CharField(choices=MemberPeriod, default='MONTHLY', max_length=8)
-    custom_period = models.DurationField(blank=True, null=True)  # Required if period = CUSTOM
+    custom_period = models.PositiveIntegerField(blank=True, null=True)  # Required if period = CUSTOM
+    custom_unit = models.CharField(choices=CustomUnit, max_length=5, blank=True, null=True)
     renewal_date = models.DateField(blank=True, null=True)  # Required unless period = LIFETIME
+    reminder = models.BooleanField(default=False)
     minimum_term = models.DateField(blank=True, null=True)
     free_trial_expiry = models.DateField(blank=True, null=True)
-    reminder = models.BooleanField(default=False)
     cost = fields.MoneyField(
         decimal_places=2,
         default=0,
