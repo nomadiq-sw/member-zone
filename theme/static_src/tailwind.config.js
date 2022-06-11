@@ -57,4 +57,16 @@ module.exports = {
         require('daisyui'),
         require('tailwind-scrollbar')
     ],
+    daisyui: {
+        themes: [
+            {
+                light: {
+                    ...require("daisyui/src/colors/themes")['[data-theme=light]'],
+                    primary: '#2962ff',
+                    'primary-focus': '#0d47a1',
+                    neutral: '#455a64'
+                }
+            },
+        ]
+    }
 }

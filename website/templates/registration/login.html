@@ -12,7 +12,7 @@
         {{ login_form|crispy }}
         <a class="link" href={% url 'password-reset' %}>I forgot my password</a>
         <div class="card-actions mt-4">
-          <input class="btn" type="submit" name="submit" value="Log in">
+          <input class="btn btn-primary" type="submit" name="submit" value="Log in">
         </div>
       </form>
     </div>
@@ -23,7 +23,7 @@
         {% csrf_token %}
         {{ register_form|crispy }}
         <div class="card-actions mt-4">
-          <input class="btn" type="submit" name="submit" value="Register">
+          <input class="btn btn-primary" type="submit" name="submit" value="Register">
         </div>
       </form>
     </div>

@@ -73,6 +73,7 @@ class MembershipEditForm(forms.ModelForm):
             'minimum_term': forms.widgets.DateInput(attrs={'type': 'date'}),
             'free_trial_expiry': forms.widgets.DateInput(attrs={'type': 'date'}),
         }
+        labels = {'reminder': "E-mail reminders"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

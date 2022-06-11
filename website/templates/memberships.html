@@ -2,8 +2,6 @@
 {% load static %}
 {% load djmoney %}
 {% load tailwind_filters %}
-{% load crispy_forms_tags %}
-{% load widget_tweaks %}
 
 {% money_localize money %}
 
@@ -28,43 +26,16 @@
               <td>Monthly</td>
               <td>12/07/2022</td>
               <td class="hidden sm:table-cell items-center">
-                <input type="checkbox" id="reminder-check" class="checkbox"/>
+                <input type="checkbox" id="reminder-check" class="checkbox checkbox-primary border-gray-800"/>
               </td>
               <td class="hidden sm:table-cell">£14.99</td>
             </tr>
           </tbody>
         </table>
-        <a href="#modal-form" class="mx-auto md:ml-2 btn btn-square bg-blue-600 border-none basis-14">NEW</a>
+        <a href="#modal-form" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14">New</a>
       </div>
     </div>
 
-<div class="modal" id="modal-form">
-  <div class="modal-box p-4 scrollbar-thin">
-    <a href="#" class="btn btn-sm btn-circle absolute right-2 top-2">✕</a>
-    <h3 class="font-bold text-lg">New membership</h3>
-    <p class="pt-2 pb-4">Enter the details of your subscription below</p>
-    <form method="post">
-      {% csrf_token %}
-      <div class="grid grid-cols-2 gap-x-4 gap-y-0">
-        <div class="col-span-2">{{ form.membership_name|as_crispy_field }}</div>
-        <div class="col-span-2">{{ form.website_link|as_crispy_field }}</div>
-        <div class="col-span-2">{{ form.membership_number|as_crispy_field }}</div>
-        <div class="col-span-2">{{ form.membership_type|as_crispy_field }}</div>
-        <div>{{ form.custom_period|as_crispy_field }}</div>
-        <div>{{ form.custom_unit|as_crispy_field }}</div>
-        <div>{{ form.renewal_date|as_crispy_field }}</div>
-        <div class="grid grid-flow-row auto-rows-auto">
-          <div>{% render_field form.reminder|add_label_class:"font-bold text-sm" %}</div>
-          <div>{% render_field form.reminder|add_class:"checkbox checkbox-lg -mt-1" %}</div>
-        </div>
-        <div>{{ form.minimum_term|as_crispy_field }}</div>
-        <div>{{ form.free_trial_expiry|as_crispy_field }}</div>
-        <div class="col-span-2">{{ form.cost|as_crispy_field }}</div>
-      </div>
-      <div>
-        <button type="submit" class="btn bg-blue-600 border-none">SAVE</button>
-      </div>
-    </form>
-  </div>
-</div>
+{% include 'partials/modal-form.html' %}
+
 {% endblock %}

@@ -1,0 +1,38 @@
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+{% load widget_tweaks %}
+{% load djmoney %}
+
+<div class="modal" id="modal-form">
+  <div class="modal-box p-4 scrollbar-thin">
+    <a href="#" class="btn btn-sm btn-circle absolute right-2 top-2">✕</a>
+    <h3 class="font-bold text-lg">New membership</h3>
+    <p class="pt-2 pb-4">Enter the details of your subscription below</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="grid grid-cols-2 gap-x-4 gap-y-0">
+        <div class="col-span-2">{{ form.membership_name|as_crispy_field }}</div>
+        <div class="col-span-2">{{ form.website_link|as_crispy_field }}</div>
+        <div class="col-span-2">{{ form.membership_number|as_crispy_field }}</div>
+        <div>{{ form.membership_type|as_crispy_field }}</div>
+        <div>{{ form.renewal_date|as_crispy_field }}</div>
+        <div>{{ form.custom_period|as_crispy_field }}</div>
+        <div>{{ form.custom_unit|as_crispy_field }}</div>
+        <div>{{ form.minimum_term|as_crispy_field }}</div>
+        <div>{{ form.free_trial_expiry|as_crispy_field }}</div>
+        <div class="grid grid-flow-row auto-rows-auto">
+          <div>
+            {% render_field form.reminder|add_label_class:"font-bold text-sm" %}
+          </div>
+          <div>
+            {% render_field form.reminder|add_class:"checkbox checkbox-lg checkbox-primary border-gray-400 my-2" %}
+          </div>
+        </div>
+        <div class="col-span-2">{{ form.cost|as_crispy_field }}</div>
+      </div>
+      <div>
+        <button type="submit" class="btn btn-primary border-none">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
