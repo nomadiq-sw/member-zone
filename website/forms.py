@@ -85,27 +85,34 @@ class MembershipEditForm(forms.ModelForm):
         renew_date = cleaned_data.get('renewal_date')
         cust_period = cleaned_data.get('custom_period')
         cust_unit = cleaned_data.get('custom_unit')
+        mem_type_fmt = {
+            'WEEKLY': "a weekly",
+            'MONTHLY': "a monthly",
+            'ANNUAL': "an annual",
+            'FIXED': "a fixed-term",
+            'LIFETIME': "a lifetime",
+            'CUSTOM': "a custom"
+        }
+        validation_errors = []
 
         if mem_type != 'LIFETIME' and renew_date is None:
-            raise forms.ValidationError(
-                _("You have selected a %(type) membership but have not set a renewal date."),
-                params={'type': mem_type},
+            validation_errors.append(forms.ValidationError(
+                _(f"You have selected {mem_type_fmt[mem_type]} membership but have not set a renewal date."),
                 code="incomplete"
-            )
+            ))
         elif mem_type != 'LIFETIME':
-            self.present_or_future_date("renewal", renew_date)
+            if renew_date < datetime.date.today():
+                validation_errors.append(forms.ValidationError(
+                    _(f"The renewal date cannot be in the past."),
+                    code="invalid"
+                ))
 
-        if mem_type == 'CUSTOM' and (cust_period is None or cust_unit is None):
-            raise forms.ValidationError(
-                _("You have selected a CUSTOM membership but have not set a custom period"),
+        if mem_type == 'CUSTOM' and (cust_period is None or cust_period == 0 or cust_unit is None):
+            validation_errors.append(forms.ValidationError(
+                _("You have selected a custom membership but have not set a valid custom period."),
                 code="incomplete"
-            )
+            ))
 
-    @staticmethod
-    def present_or_future_date(field, date):
-        if date < datetime.date.today():
-            raise forms.ValidationError(
-                _("The %(field) date cannot be in the past!"),
-                params={'field': field},
-                code="invalid"
-            )
+        if validation_errors:
+            raise forms.ValidationError(validation_errors)
+        return self.cleaned_data

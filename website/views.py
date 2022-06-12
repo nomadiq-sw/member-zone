@@ -25,6 +25,17 @@ class MembershipView(LoginRequiredMixin, TemplateView):
     template_name = 'memberships.html'
     extra_context = {'form': MembershipEditForm()}
 
+    def post(self, request):
+        form = MembershipEditForm(request.POST)
+        valid = form.is_valid()
+        if valid:
+            membership = form.save(commit=False)
+            membership.user = request.user
+            membership.save()
+            form = MembershipEditForm()
+
+        return render(request, 'partials/modal-form.html', {'form': form, 'valid': valid})
+
 
 class LoginSignupView(View):
 

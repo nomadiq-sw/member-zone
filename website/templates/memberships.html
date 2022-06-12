@@ -32,10 +32,13 @@
             </tr>
           </tbody>
         </table>
-        <a href="#modal-form" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14">New</a>
+        <label for="modal-form" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14">New</label>
       </div>
     </div>
 
-{% include 'partials/modal-form.html' %}
+<input type="checkbox" id="modal-form" class="modal-toggle"/>
+<div id="modal" class="modal">
+  {% include 'partials/modal-form.html' %}
+</div>
 
 {% endblock %}
