@@ -5,8 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html, format_html_join
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.safestring import mark_safe
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Fieldset, ButtonHolder, Submit, Row, Column, Div
+from djmoney.forms.widgets import MoneyWidget
 from .models import SiteUser, Membership
 
 help_texts = ("different from your email",
@@ -73,7 +72,7 @@ class MembershipEditForm(forms.ModelForm):
             'minimum_term': forms.widgets.DateInput(attrs={'type': 'date'}),
             'free_trial_expiry': forms.widgets.DateInput(attrs={'type': 'date'}),
         }
-        labels = {'reminder': "E-mail reminders"}
+        labels = {'membership_type': "Subscription type", 'reminder': "E-mail reminders"}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

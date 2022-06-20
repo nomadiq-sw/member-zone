@@ -44,7 +44,7 @@
           {% render_field form.reminder|add_class:"checkbox checkbox-lg checkbox-primary border-gray-400 my-2" %}
         </div>
       </div>
-      <div class="col-span-2">{{ form.cost|as_crispy_field }}</div>
+      <div class="col-span-2">{% render_field form.cost|add_class:"form-input rounded-lg border-gray-300 mr-1"|as_crispy_field %}</div>
     </div>
     <div>
       <button type="submit" class="btn btn-primary border-none">Save</button>
