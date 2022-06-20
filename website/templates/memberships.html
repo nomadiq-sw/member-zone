@@ -9,6 +9,11 @@
     <div class="card items-center pt-8">
       <h2 class="text-xl text-center w-3/4">Welcome to MemberZone! Here are your memberships.</h2>
       <div class="divider w-1/2 mx-auto"></div>
+      <div id="alert-success"
+           class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-2 -mt-2 w-auto mx-auto"
+           role="alert" style="display: none">
+        <span class="block inline">New membership added successfully!</span>
+      </div>
       <div class="flex flex-row w-screen md:w-3/4 xl:w-1/2 overflow-auto">
         <table class="table table-fixed grow">
           <thead>
@@ -16,27 +21,20 @@
               <th>Membership</th>
               <th>Subscription</th>
               <th>Renewal</th>
-              <th class="p-0 hidden sm:table-cell">Reminder</th>
+              <th class="p-0 hidden sm:table-cell">Reminders</th>
               <th class="hidden sm:table-cell">Cost</th>
             </tr>
           </thead>
-          <tbody>
-            <tr>
-              <th class="bg-white">Netflix</th>
-              <td>Monthly</td>
-              <td>12/07/2022</td>
-              <td class="hidden sm:table-cell items-center">
-                <input type="checkbox" id="reminder-check" class="checkbox checkbox-primary border-gray-800"/>
-              </td>
-              <td class="hidden sm:table-cell">£14.99</td>
-            </tr>
-          </tbody>
+          <tbody id="membership-table-body"
+                 hx-trigger="load, membershipsChanged from:body"
+                 hx-get="{% url 'update-memberships' %}"
+                 hx-target=this></tbody>
         </table>
-        <label for="modal-form" class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14">New</label>
+        <button _="on click add .modal-open to #modal"
+                class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14">New</button>
       </div>
     </div>
 
-<input type="checkbox" id="modal-form" class="modal-toggle"/>
 <div id="modal" class="modal">
   {% include 'partials/modal-form.html' %}
 </div>

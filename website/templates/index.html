@@ -14,34 +14,14 @@
         </tr>
       </thead>
       <tbody class="flex-1 sm:flex-none">
-        <!-- row 1 -->
-        <tr>
-          <th class="pl-2 truncate text-left">Netflix</th>
-          <td class="p-0">Monthly</td>
-          <td class="p-0">01/03/2022</td>
-          <td class="p-0">$14.99</td>
-        </tr>
-        <!-- row 2 -->
-        <tr>
-          <th class="pl-2 truncate text-left">NordVPN</th>
-          <td class="p-0">Monthly</td>
-          <td class="p-0">15/03/2022</td>
-          <td class="p-0">$9.99</td>
-        </tr>
-        <!-- row 3 -->
-        <tr>
-          <th class="pl-2 truncate text-left">LA Fitness</th>
-          <td class="p-0">Annual</td>
-          <td class="p-0">26/12/2022</td>
-          <td class="p-0">$580.00</td>
-        </tr>
-        <!-- row 4 -->
-        <tr>
-          <th class="pl-2 truncate text-left">Fight Club</th>
-          <td class="p-0">Lifetime</td>
-          <td class="p-0">--</td>
-          <td class="p-0">$999.99</td>
-        </tr>
+        {% for item in data %}
+          <tr>
+            <th class="pl-2 truncate text-left">{{ item.name }}</th>
+            <td class="p-0">{{ item.period }}</td>
+            <td class="p-0">{{ item.date }}</td>
+            <td class="p-0">{{ item.cost }}</td>
+          </tr>
+        {% endfor %}
       </tbody>
     </table>
     <div class="card-body items-center text-center -mt-2">

@@ -1,0 +1,16 @@
+{% for membership in object_list %}
+  <tr>
+    <th class="bg-white">{{ membership.membership_name }}</th>
+    <td>{{ membership.membership_type|title }}</td>
+    <td>{{ membership.renewal_date }}</td>
+    <td class="hidden sm:table-cell items-center">
+      <input type="checkbox"
+             id="reminder-check"
+             class="checkbox checkbox-primary border-none"
+             {% if membership.reminder %}checked{% endif %}
+             disabled
+      />
+    </td>
+    <td class="hidden sm:table-cell">{{ membership.cost }}</td>
+  </tr>
+{% endfor %}

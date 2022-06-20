@@ -1,8 +1,10 @@
+import datetime
+
 from django.template.loader import get_template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy, reverse
-from django.views.generic import View, TemplateView
+from django.views.generic import View, TemplateView, ListView
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import BadHeaderError, send_mail
@@ -12,12 +14,20 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models.query_utils import Q
 from .forms import UserRegistrationForm, UserLoginForm, MembershipEditForm
-from .models import SiteUser
+from .models import SiteUser, Membership
 
 
 # Create your views here.
 class IndexView(TemplateView):
     template_name = 'index.html'
+    today = datetime.date.today()
+    dummy_data = [
+        {'name': "Netflix", 'period': "Monthly", 'date': today+datetime.timedelta(days=5), 'cost': "$14.99"},
+        {'name': "NordVPN", 'period': "Monthly", 'date': today+datetime.timedelta(days=11), 'cost': "$11.99"},
+        {'name': "LA Fitness", 'period': "Annual", 'date': today+datetime.timedelta(days=99), 'cost': "$580.00"},
+        {'name': "Fight Club", 'period': "Lifetime", 'date': "--", 'cost': "$999.99"}
+    ]
+    extra_context = {'data': dummy_data}
 
 
 class MembershipView(LoginRequiredMixin, TemplateView):
@@ -27,14 +37,27 @@ class MembershipView(LoginRequiredMixin, TemplateView):
 
     def post(self, request):
         form = MembershipEditForm(request.POST)
-        valid = form.is_valid()
-        if valid:
+        success = False
+        if form.is_valid():
             membership = form.save(commit=False)
             membership.user = request.user
             membership.save()
+            success = True
             form = MembershipEditForm()
 
-        return render(request, 'partials/modal-form.html', {'form': form, 'valid': valid})
+        response = render(request, 'partials/modal-form.html', {'form': form, 'success': success})
+        if success:
+            response['HX-Trigger'] = 'membershipsChanged'
+        return response
+
+
+class MembershipTable(LoginRequiredMixin, ListView):
+    login_url = reverse_lazy('login')
+    model = Membership
+    template_name = 'partials/membership-table.html'
+
+    def get_queryset(self):
+        return Membership.objects.filter(user=self.request.user)
 
 
 class LoginSignupView(View):

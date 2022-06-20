@@ -17,6 +17,7 @@ urlpatterns = [
          name='password-reset-confirm'),
     path('password-reset/complete', auth_views.PasswordResetCompleteView.as_view(), name='password-reset-complete'),
     path('memberships/my-memberships', views.MembershipView.as_view(), name='my-memberships'),
+    path('memberships/update-memberships', views.MembershipTable.as_view(), name='update-memberships'),
 ]
 
 htmx_urlpatterns = []
