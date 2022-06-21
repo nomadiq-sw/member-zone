@@ -14,7 +14,8 @@
              id="reminder-check"
              class="checkbox checkbox-primary border-gray-400 mt-1"
              {% if membership.reminder %}checked{% endif %}
-             value="{{ membership.pk }}"
+             hx-post="{% url 'toggle-reminders' membership.pk %}"
+             hx-swap="none"
       />
     </td>
     <td class="hidden sm:table-cell">{{ membership.cost }}</td>

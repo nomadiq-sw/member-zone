@@ -2,9 +2,9 @@ import datetime
 
 from django.template.loader import get_template
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views.generic import View, TemplateView, ListView
+from django.views.generic import View, TemplateView, ListView, UpdateView
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import BadHeaderError, send_mail
@@ -58,6 +58,16 @@ class MembershipTable(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Membership.objects.filter(user=self.request.user)
+
+
+def toggle_reminders(request, pk):
+    if request.method == 'POST':
+        membership = get_object_or_404(Membership, pk=pk)
+        if membership.user == request.user:
+            membership.reminder = not membership.reminder
+            membership.save()
+
+    return redirect('my-memberships')
 
 
 class LoginSignupView(View):
