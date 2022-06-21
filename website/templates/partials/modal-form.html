@@ -4,17 +4,6 @@
 {% load djmoney %}
 
 <div id="modal-box" class="modal-box p-4 scrollbar-thin" hx-target="this" hx-swap="outerHTML">
-  {% if success %}
-    <script type="text/hyperscript">
-      on htmx:load
-        remove .modal-open from #modal
-        then
-          show #alert-success
-          wait 3s
-          hide #alert-success
-      end
-    </script>
-  {% endif %}
   <button _="on click remove .modal-open from #modal" class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
   <h3 class="font-bold text-lg">New membership</h3>
   {% if form.non_field_errors %}

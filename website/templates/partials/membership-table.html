@@ -1,7 +1,7 @@
 {% for membership in object_list %}
   <tr class="h-auto">
     <th class="bg-white dropdown dropdown-right dropdown-end mt-1 -mb-1">
-      <label tabindex="0"><a class="cursor-pointer">{{ membership.membership_name }}</a></label>
+      <label tabindex="0"><a class="link cursor-pointer">{{ membership.membership_name }}</a></label>
       <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
         <li><a>Edit</a></li>
         <li><a>Delete</a></li>
@@ -12,9 +12,9 @@
     <td class="hidden sm:table-cell items-center">
       <input type="checkbox"
              id="reminder-check"
-             class="checkbox checkbox-primary border-none mt-0.5"
+             class="checkbox checkbox-primary border-gray-400 mt-1"
              {% if membership.reminder %}checked{% endif %}
-             disabled
+             value="{{ membership.pk }}"
       />
     </td>
     <td class="hidden sm:table-cell">{{ membership.cost }}</td>

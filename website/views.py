@@ -45,7 +45,7 @@ class MembershipView(LoginRequiredMixin, TemplateView):
             success = True
             form = MembershipEditForm()
 
-        response = render(request, 'partials/modal-form.html', {'form': form, 'success': success})
+        response = render(request, 'partials/modal-form.html', {'form': form})
         if success:
             response['HX-Trigger'] = 'membershipsChanged'
         return response
