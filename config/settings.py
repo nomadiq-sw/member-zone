@@ -118,6 +118,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = 'login'
+
 LOGOUT_REDIRECT_URL = '/'
 
 # Internationalization

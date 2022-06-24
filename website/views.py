@@ -4,11 +4,13 @@ from django.template.loader import get_template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views.generic import View, TemplateView, ListView, UpdateView
+from django.views.generic import View, TemplateView, ListView
+from django.views.generic.edit import DeleteView
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import BadHeaderError, send_mail
 from django.contrib.auth import login
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
@@ -51,7 +53,7 @@ class MembershipView(LoginRequiredMixin, TemplateView):
         return response
 
 
-class MembershipTable(LoginRequiredMixin, ListView):
+class MembershipTableView(LoginRequiredMixin, ListView):
     login_url = reverse_lazy('login')
     model = Membership
     template_name = 'partials/membership-table.html'
@@ -60,14 +62,27 @@ class MembershipTable(LoginRequiredMixin, ListView):
         return Membership.objects.filter(user=self.request.user)
 
 
+@login_required()
 def toggle_reminders(request, pk):
     if request.method == 'POST':
         membership = get_object_or_404(Membership, pk=pk)
         if membership.user == request.user:
             membership.reminder = not membership.reminder
             membership.save()
-
     return redirect('my-memberships')
+
+
+class DeleteMembershipView(LoginRequiredMixin, DeleteView):
+    model = Membership
+    login_url = reverse_lazy('login')
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.user == self.request.user:
+            self.object.delete()
+            return HttpResponse()
+            # Unfortunately we cannot return status 204 or else htmx will ignore the response (see docs at htmx.org)
+        return redirect('my-memberships')
 
 
 class LoginSignupView(View):
