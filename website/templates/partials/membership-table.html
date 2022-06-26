@@ -3,7 +3,11 @@
     <th class="bg-white dropdown dropdown-right dropdown-end mt-1 -mb-1">
       <label tabindex="0"><a class="link cursor-pointer">{{ membership.membership_name }}</a></label>
       <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
-        <li><a>Edit</a></li>
+        <li>
+          <a hx-get="{% url 'edit-membership' membership.pk %}" hx-target="#modal" _="on click add .modal-open to modal">
+            Edit
+          </a>
+        </li>
         <li>
           <a hx-post="{% url 'delete-membership' membership.pk %}"
              hx-confirm="Are you sure you want to delete the membership '{{ membership.membership_name }}'?"

@@ -3,8 +3,9 @@
 {% load widget_tweaks %}
 {% load djmoney %}
 
-<div id="modal-box" class="modal-box p-4 scrollbar-thin" hx-target="this" hx-swap="outerHTML">
-  <button _="on click remove .modal-open from #modal" class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
+<div class="modal-box p-4 scrollbar-thin" hx-target="this" hx-swap="outerHTML">
+  <button _="on click remove .modal-open from #modal then set #my-form's @hx-post to '{% url 'my-memberships' %}'"
+          class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
   <h3 class="font-bold text-lg">New membership</h3>
   {% if form.non_field_errors %}
     <div class="mt-2">

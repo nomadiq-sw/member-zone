@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import View, TemplateView, ListView
-from django.views.generic.edit import DeleteView
+from django.views.generic.edit import DeleteView, UpdateView
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core.mail import BadHeaderError, send_mail
@@ -33,18 +33,21 @@ class IndexView(TemplateView):
 
 
 class MembershipView(LoginRequiredMixin, TemplateView):
-    login_url = reverse_lazy('login')
     template_name = 'memberships.html'
     extra_context = {'form': MembershipEditForm()}
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         form = MembershipEditForm(request.POST)
         success = False
         if form.is_valid():
             membership = form.save(commit=False)
+            if kwargs:
+                if kwargs['update']:
+                    membership.pk = kwargs['pk']
             membership.user = request.user
             membership.save()
             success = True
+            self.request.path = reverse_lazy('my-memberships')
             form = MembershipEditForm()
 
         response = render(request, 'partials/modal-form.html', {'form': form})
@@ -54,7 +57,6 @@ class MembershipView(LoginRequiredMixin, TemplateView):
 
 
 class MembershipTableView(LoginRequiredMixin, ListView):
-    login_url = reverse_lazy('login')
     model = Membership
     template_name = 'partials/membership-table.html'
 
@@ -74,7 +76,6 @@ def toggle_reminders(request, pk):
 
 class DeleteMembershipView(LoginRequiredMixin, DeleteView):
     model = Membership
-    login_url = reverse_lazy('login')
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
@@ -83,6 +84,22 @@ class DeleteMembershipView(LoginRequiredMixin, DeleteView):
             return HttpResponse()
             # Unfortunately we cannot return status 204 or else htmx will ignore the response (see docs at htmx.org)
         return redirect('my-memberships')
+
+
+class EditMembershipView(LoginRequiredMixin, UpdateView):
+    model = Membership
+    fields = "__all__"
+    template_name = 'partials/modal-form.html'
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.user == request.user:
+            return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.user == request.user:
+            return MembershipView.as_view()(request, update=True, pk=self.object.pk)
 
 
 class LoginSignupView(View):
