@@ -15,6 +15,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models.query_utils import Q
+from django.db.models.functions import Lower
 from .forms import UserRegistrationForm, UserLoginForm, MembershipEditForm
 from .models import SiteUser, Membership
 
@@ -24,8 +25,8 @@ class IndexView(TemplateView):
     template_name = 'index.html'
     today = datetime.date.today()
     dummy_data = [
+        {'name': "NordVPN", 'period': "Monthly", 'date': today + datetime.timedelta(days=11), 'cost': "$11.99"},
         {'name': "Netflix", 'period': "Monthly", 'date': today+datetime.timedelta(days=5), 'cost': "$14.99"},
-        {'name': "NordVPN", 'period': "Monthly", 'date': today+datetime.timedelta(days=11), 'cost': "$11.99"},
         {'name': "LA Fitness", 'period': "Annual", 'date': today+datetime.timedelta(days=99), 'cost': "$580.00"},
         {'name': "Fight Club", 'period': "Lifetime", 'date': "--", 'cost': "$999.99"}
     ]
@@ -61,7 +62,7 @@ class MembershipTableView(LoginRequiredMixin, ListView):
     template_name = 'partials/membership-table.html'
 
     def get_queryset(self):
-        return Membership.objects.filter(user=self.request.user)
+        return Membership.objects.filter(Q(user=self.request.user)).order_by(Lower('membership_name'), '-renewal_date')
 
 
 @login_required()
