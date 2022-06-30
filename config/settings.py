@@ -29,56 +29,56 @@ DEBUG = True
 ALLOWED_HOSTS = []
 
 INTERNAL_IPS = [
-    "127.0.0.1",
+	"127.0.0.1",
 ]
 # Application definition
 
 INSTALLED_APPS = [
-    'website',
-    'tailwind',
-    'theme',
-    'django_htmx',
-    'widget_tweaks',
-    'crispy_forms',
-    'crispy_tailwind',
-    'django_browser_reload',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'djmoney',
+	'website',
+	'tailwind',
+	'theme',
+	'django_htmx',
+	'widget_tweaks',
+	'crispy_forms',
+	'crispy_tailwind',
+	'django_browser_reload',
+	'django.contrib.admin',
+	'django.contrib.auth',
+	'django.contrib.contenttypes',
+	'django.contrib.sessions',
+	'django.contrib.messages',
+	'django.contrib.staticfiles',
+	'djmoney',
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'django_htmx.middleware.HtmxMiddleware',
-    'django_browser_reload.middleware.BrowserReloadMiddleware',
+	'django.middleware.security.SecurityMiddleware',
+	'django.contrib.sessions.middleware.SessionMiddleware',
+	'django.middleware.common.CommonMiddleware',
+	'django.middleware.csrf.CsrfViewMiddleware',
+	'django.contrib.auth.middleware.AuthenticationMiddleware',
+	'django.contrib.messages.middleware.MessageMiddleware',
+	'django.middleware.clickjacking.XFrameOptionsMiddleware',
+	'django_htmx.middleware.HtmxMiddleware',
+	'django_browser_reload.middleware.BrowserReloadMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
-    {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-            ],
-        },
-    },
+	{
+		'BACKEND': 'django.template.backends.django.DjangoTemplates',
+		'DIRS': [],
+		'APP_DIRS': True,
+		'OPTIONS': {
+			'context_processors': [
+				'django.template.context_processors.debug',
+				'django.template.context_processors.request',
+				'django.contrib.auth.context_processors.auth',
+				'django.contrib.messages.context_processors.messages',
+			],
+		},
+	},
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
@@ -89,33 +89,32 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+	'default': {
+		'ENGINE': 'django.db.backends.sqlite3',
+		'NAME': BASE_DIR / 'db.sqlite3',
+	}
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 AUTH_USER_MODEL = 'website.SiteUser'
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-        'OPTIONS': {
-            'max_similarity': 0.6,  # Default of 0.7 is too weak, allows password very similar to email in some cases
-        }
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+	{
+		'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+		'OPTIONS': {
+			'max_similarity': 0.6,  # Default of 0.7 is too weak, allows password very similar to email in some cases
+		}
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+	},
+	{
+		'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+	},
 ]
 
 LOGIN_URL = 'login'
@@ -136,25 +135,24 @@ USE_L10N = True
 USE_TZ = True
 
 CURRENCIES = ('EUR', 'GBP', 'CHF', 'NOK', 'SEK', 'DKK', 'CZK', 'PLN', 'RON',
-              'TRY', 'RUB',
-              'USD', 'CAD', 'MXN', 'BRL', 'ARS', 'CLP', 'COP', 'VEF',
-              'AUD', 'NZD',
-              'INR', 'JPY', 'CNY', 'KRW', 'HKD', 'MYR', 'IDR', 'PHP', 'SGD', 'TWD', 'THB', 'VND', 'PKR', 'BDT',
-              'SAR', 'AED', 'ILS', 'IRR',
-              'ZAR', 'EGP', 'NGN')  # List based on 50 largest economies according to worlddata.info
+			  'TRY', 'RUB',
+			  'USD', 'CAD', 'MXN', 'BRL', 'ARS', 'CLP', 'COP', 'VEF',
+			  'AUD', 'NZD',
+			  'INR', 'JPY', 'CNY', 'KRW', 'HKD', 'MYR', 'IDR', 'PHP', 'SGD', 'TWD', 'THB', 'VND', 'PKR', 'BDT',
+			  'SAR', 'AED', 'ILS', 'IRR',
+			  'ZAR', 'EGP', 'NGN')  # List based on 50 largest economies according to worlddata.info
 
 CURRENCY_CHOICES = [('EUR', 'EUR'), ('GBP', 'GBP'), ('CHF', 'CHF'), ('NOK', 'NOK'), ('SEK', 'SEK'), ('DKK', 'DKK'),
-                    ('CZK', 'CZK'), ('PLN', 'PLN'), ('RON', 'RON'),
-                    ('TRY', 'TRY'), ('RUB', 'RUB'),
-                    ('USD', 'USD'), ('CAD', 'CAD'), ('MXN', 'MXN'), ('BRL', 'BRL'), ('ARS', 'ARS'), ('CLP', 'CLP'),
-                    ('COP', 'COP'), ('VEF', 'VEF'),
-                    ('AUD', 'AUD'), ('NZD', 'NZD'),
-                    ('INR', 'INR'), ('JPY', 'JPY'), ('CNY', 'CNY'), ('KRW', 'KRW'), ('HKD', 'HKD'), ('MYR', 'MYR'),
-                    ('IDR', 'IDR'), ('PHP', 'PHP'), ('SGD', 'SGD'),
-                    ('TWD', 'TWD'), ('THB', 'THB'), ('VND', 'VND'), ('PKR', 'PKR'), ('BDT', 'BDT'),
-                    ('SAR', 'SAR'), ('AED', 'AED'), ('ILS', 'ILS'), ('IRR', 'IRR'),
-                    ('ZAR', 'ZAR'), ('EGP', 'EGP'), ('NGN', 'NGN')]
-
+					('CZK', 'CZK'), ('PLN', 'PLN'), ('RON', 'RON'),
+					('TRY', 'TRY'), ('RUB', 'RUB'),
+					('USD', 'USD'), ('CAD', 'CAD'), ('MXN', 'MXN'), ('BRL', 'BRL'), ('ARS', 'ARS'), ('CLP', 'CLP'),
+					('COP', 'COP'), ('VEF', 'VEF'),
+					('AUD', 'AUD'), ('NZD', 'NZD'),
+					('INR', 'INR'), ('JPY', 'JPY'), ('CNY', 'CNY'), ('KRW', 'KRW'), ('HKD', 'HKD'), ('MYR', 'MYR'),
+					('IDR', 'IDR'), ('PHP', 'PHP'), ('SGD', 'SGD'),
+					('TWD', 'TWD'), ('THB', 'THB'), ('VND', 'VND'), ('PKR', 'PKR'), ('BDT', 'BDT'),
+					('SAR', 'SAR'), ('AED', 'AED'), ('ILS', 'ILS'), ('IRR', 'IRR'),
+					('ZAR', 'ZAR'), ('EGP', 'EGP'), ('NGN', 'NGN')]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/

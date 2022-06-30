@@ -5,7 +5,8 @@
 
 <div class="modal-box p-4 scrollbar-thin" hx-target="this" hx-swap="outerHTML">
   <button _="on click remove .modal-open from #modal then set #my-form's @hx-post to '{% url 'my-memberships' %}'"
-          class="btn btn-sm btn-circle absolute right-2 top-2">✕</button>
+          class="btn btn-sm btn-circle absolute right-2 top-2">✕
+  </button>
   <h3 class="font-bold text-lg">New membership</h3>
   {% if form.non_field_errors %}
     <div class="mt-2">
@@ -34,7 +35,9 @@
           {% render_field form.reminder|add_class:"checkbox checkbox-lg checkbox-primary border-gray-400 my-2" %}
         </div>
       </div>
-      <div class="col-span-2">{% render_field form.cost|add_class:"form-input rounded-lg border-gray-300 mr-1"|as_crispy_field %}</div>
+      <div class="col-span-2">
+        {% render_field form.cost|add_class:"form-input rounded-lg border-gray-300 mr-1"|as_crispy_field %}
+      </div>
     </div>
     <div>
       <button type="submit" class="btn btn-primary border-none">Save</button>

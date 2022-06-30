@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
+	dependencies = [
+		('website', '0004_alter_membership_cost_currency'),
+	]
 
-    dependencies = [
-        ('website', '0004_alter_membership_cost_currency'),
-    ]
-
-    operations = [
-        migrations.AlterField(
-            model_name='membership',
-            name='custom_unit',
-            field=models.CharField(blank=True, choices=[('DAY', 'Days'), ('WEEK', 'Weeks'), ('MONTH', 'Months'), ('YEAR', 'Years')], max_length=5, null=True),
-        ),
-    ]
+	operations = [
+		migrations.AlterField(
+			model_name='membership',
+			name='custom_unit',
+			field=models.CharField(blank=True,
+								   choices=[('DAY', 'Days'), ('WEEK', 'Weeks'), ('MONTH', 'Months'), ('YEAR', 'Years')],
+								   max_length=5, null=True),
+		),
+	]

@@ -6,22 +6,22 @@
     <table class="table table-fixed w-screen md:w-3/4 xl:w-1/2 w-full">
       <!-- head -->
       <thead>
-        <tr>
-          <th class="pl-2 text-left">Membership</th>
-          <th class="p-0">Subscription</th>
-          <th class="p-0">Renewal</th>
-          <th class="p-0 w-16">Cost</th>
-        </tr>
+      <tr>
+        <th class="pl-2 text-left">Membership</th>
+        <th class="p-0">Subscription</th>
+        <th class="p-0">Renewal</th>
+        <th class="p-0 w-16">Cost</th>
+      </tr>
       </thead>
       <tbody class="flex-1 sm:flex-none">
-        {% for item in data %}
-          <tr>
-            <th class="pl-2 truncate text-left">{{ item.name }}</th>
-            <td class="p-0">{{ item.period }}</td>
-            <td class="p-0">{{ item.date }}</td>
-            <td class="p-0">{{ item.cost }}</td>
-          </tr>
-        {% endfor %}
+      {% for item in data %}
+        <tr>
+          <th class="pl-2 truncate text-left">{{ item.name }}</th>
+          <td class="p-0">{{ item.period }}</td>
+          <td class="p-0">{{ item.date }}</td>
+          <td class="p-0">{{ item.cost }}</td>
+        </tr>
+      {% endfor %}
       </tbody>
     </table>
     <div class="card-body items-center text-center -mt-2">

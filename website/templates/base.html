@@ -2,39 +2,30 @@
 <!DOCTYPE html>
 <html data-theme="light" lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MemberZone</title>
-    <!-- Custom CSS -->
-    {% tailwind_css %}
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.7.0" integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <script src="https://unpkg.com/hyperscript.org@0.9.5"></script>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MemberZone</title>
+  <!-- Custom CSS -->
+  {% tailwind_css %}
+  <!-- HTMX -->
+  <script src="https://unpkg.com/htmx.org@1.7.0"
+          integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo"
+          crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+  <script src="https://unpkg.com/hyperscript.org@0.9.5"></script>
 </head>
 <body>
-  {% include 'partials/navbar.html' %}
-  <div>
-    {% block content %}
-    {% endblock %}
-  </div>
+{% include 'partials/navbar.html' %}
+<div>
+  {% block content %}
+  {% endblock %}
+</div>
 
-  <script>
+<script>
     document.body.addEventListener('htmx:configRequest', (event) => {
-      event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
+        event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';
     })
-
-    htmx.onLoad(function(content) {
-      var sortables = content.querySelectorAll(".sortable");
-      for (var i = 0; i < sortables.length; i++) {
-        var sortable = sortables[i];
-        new Sortable(sortable, {
-          animation: 150,
-          ghostClass: 'blue-background-class'
-        });
-      }
-    })
-  </script>
+</script>
 </body>
 </html>
