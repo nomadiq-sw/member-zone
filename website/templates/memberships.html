@@ -38,7 +38,8 @@
                hx-get="{% url 'update-memberships' %}"
                hx-target=this></tbody>
       </table>
-      <button _="on click add .modal-open to #modal"
+      <button _="on htmx:afterRequest add .modal-open to #modal"
+              hx-get="{% url 'my-memberships' %}" hx-select="#modal-box" hx-target="#modal"
               class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14">New
       </button>
     </div>

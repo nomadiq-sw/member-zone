@@ -5,7 +5,7 @@
       <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
         <li>
           <a hx-get="{% url 'edit-membership' membership.pk %}" hx-target="#modal"
-             _="on click add .modal-open to modal">
+             _="on htmx:afterRequest add .modal-open to modal">
             Edit
           </a>
         </li>
