@@ -36,13 +36,25 @@
         <tbody id="membership-table-body"
                hx-trigger="load, membershipsChanged from:body"
                hx-get="{% url 'update-memberships' %}"
-               hx-target=this></tbody>
+               hx-target=this
+               _="on htmx:afterOnLoad add .hidden to #spinner">
+        </tbody>
       </table>
       <button _="on htmx:afterRequest add .modal-open to #modal"
               hx-get="{% url 'my-memberships' %}" hx-select="#modal-box" hx-target="#modal"
               class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14">New
       </button>
     </div>
+    <!-- By Sam Herbert (@sherb), for everyone. More @ http://goo.gl/7AJzbL -->
+    <svg id="spinner" class="animate-spin mt-8" width="38" height="38" viewBox="0 0 38 38" stroke="#2962ff">
+      <g fill="none" fill-rule="evenodd">
+        <g transform="translate(1 1)" stroke-width="2">
+          <circle stroke-opacity=".3" cx="18" cy="18" r="18"></circle>
+          <path d="M36 18c0-9.94-8.06-18-18-18">
+          </path>
+        </g>
+      </g>
+    </svg>
   </div>
 
   <div id="modal" class="modal">
