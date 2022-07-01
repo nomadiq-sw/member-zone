@@ -22,10 +22,9 @@
     <td>{{ membership.renewal_date }}</td>
     <td class="hidden sm:table-cell items-center">
       <input type="checkbox"
-             id="reminder-check"
              class="checkbox checkbox-primary border-gray-400 mt-1"
              {% if membership.reminder %}checked{% endif %}
-             hx-post="{% url 'toggle-reminders' membership.pk %}"
+             hx-patch="{% url 'toggle-reminders' membership.pk %}"
              hx-swap="none"/>
     </td>
     <td class="hidden sm:table-cell">{{ membership.cost }}</td>

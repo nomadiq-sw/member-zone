@@ -67,12 +67,11 @@ class MembershipTableView(LoginRequiredMixin, ListView):
 
 @login_required()
 def toggle_reminders(request, pk):
-	if request.method == 'POST':
-		membership = get_object_or_404(Membership, pk=pk)
+	if request.method == 'PATCH':
+		membership = Membership.objects.get(pk=pk)
 		if membership.user == request.user:
 			membership.reminder = not membership.reminder
 			membership.save()
-	return redirect('my-memberships')
 
 
 class DeleteMembershipView(LoginRequiredMixin, DeleteView):
