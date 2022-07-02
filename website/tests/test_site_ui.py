@@ -161,7 +161,7 @@ class TestUserLoginFormErrors(LiveServerTestCase):
 			assert False
 
 
-@pytest.mark.usefixtures('setup')
+@pytest.mark.usefixtures('setup', 'new_user')
 class TestUserLoginFormSuccess(LiveServerTestCase):
 
 	def setUp(self):
@@ -171,7 +171,6 @@ class TestUserLoginFormSuccess(LiveServerTestCase):
 		self.login = self.driver.find_element(By.XPATH, ".//input[@value='Log in' and @type='submit']")
 
 	def test_user_login_success(self):
-		SiteUser.objects.create_user(email="juan.gomez@realtalk.com", password="PwdForTest1")
 		self.user_email.send_keys("juan.gomez@realtalk.com")
 		self.user_pwd.send_keys("PwdForTest1")
 		self.login.send_keys(Keys.ENTER)
@@ -185,7 +184,7 @@ class TestUserLoginFormSuccess(LiveServerTestCase):
 			self.assertURLEqual(self.driver.current_url, self.live_server_url + '/memberships/my-memberships')
 
 
-@pytest.mark.usefixtures('setup')
+@pytest.mark.usefixtures('setup', 'new_user')
 class TestPasswordResetForm(LiveServerTestCase):
 
 	def setUp(self):
@@ -194,7 +193,6 @@ class TestPasswordResetForm(LiveServerTestCase):
 		self.reset_button = self.driver.find_element(By.XPATH, ".//input[@value='Reset password' and @type='submit']")
 
 	def test_reset_password_valid_email(self):
-		SiteUser.objects.create_user(email="juan.gomez@realtalk.com", password="PwdForTest1")
 		self.reset_email.send_keys("juan.gomez@realtalk.com")
 		self.reset_button.send_keys(Keys.ENTER)
 
@@ -242,7 +240,7 @@ class TestPasswordResetForm(LiveServerTestCase):
 					assert user.check_password("PwdForTest2")
 
 	def test_reset_password_invalid_email(self):
-		self.reset_email.send_keys("juan.gomez@realtalk.com")
+		self.reset_email.send_keys("pablo.gomez@realtalk.com")
 		self.reset_button.send_keys(Keys.ENTER)
 
 		try:
@@ -252,3 +250,18 @@ class TestPasswordResetForm(LiveServerTestCase):
 			print("Password reset invalidation failed!")
 		finally:
 			self.assertURLEqual(self.driver.current_url, self.live_server_url + '/password-reset/invalid')
+
+
+@pytest.mark.usefixtures('setup', 'new_user')
+class TestNewMembershipFormErrors(LiveServerTestCase):
+
+	def setUp(self):
+		self.client.login(username="juan.gomez@realtalk.com", password="PwdForTest1")
+		cookie = self.client.cookies['sessionid']
+		self.driver.get(self.live_server_url + '/index')
+		self.driver.add_cookie({'name': 'sessionid', 'value': cookie.value, 'secure': False, 'path': '/'})
+		self.driver.refresh()
+		self.driver.get(self.live_server_url + '/memberships/my-memberships')
+
+	def test_create_new_membership(self):
+		assert True
