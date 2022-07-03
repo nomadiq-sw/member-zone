@@ -1,15 +1,19 @@
+import moneyed
 import pytest
 import re
 from django.test import LiveServerTestCase
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as ec
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.core import mail
-from website.models import SiteUser
+from datetime import date, timedelta
+from time import sleep
+from decimal import Decimal
+from website.models import SiteUser, Membership
 
 
 # Create your tests here.
@@ -253,7 +257,7 @@ class TestPasswordResetForm(LiveServerTestCase):
 
 
 @pytest.mark.usefixtures('setup', 'new_user')
-class TestNewMembershipFormErrors(LiveServerTestCase):
+class TestNewMembershipForm(LiveServerTestCase):
 
 	def setUp(self):
 		self.client.login(username="juan.gomez@realtalk.com", password="PwdForTest1")
@@ -263,5 +267,65 @@ class TestNewMembershipFormErrors(LiveServerTestCase):
 		self.driver.refresh()
 		self.driver.get(self.live_server_url + '/memberships/my-memberships')
 
-	def test_create_new_membership(self):
-		assert True
+		self.name = self.driver.find_element(By.ID, 'id_membership_name')
+		self.m_type = Select(self.driver.find_element(By.NAME, 'membership_type'))
+		self.m_url = self.driver.find_element(By.ID, 'id_website_link')
+		self.m_num = self.driver.find_element(By.ID, 'id_membership_number')
+		self.renewal = self.driver.find_element(By.ID, 'id_renewal_date')
+		self.custom_p = self.driver.find_element(By.ID, 'id_custom_period')
+		self.custom_u = Select(self.driver.find_element(By.NAME, 'custom_unit'))
+		self.cost_val = self.driver.find_element(By.ID, 'id_cost_0')
+		self.cost_cur = Select(self.driver.find_element(By.ID, 'id_cost_1'))
+		self.submit = self.driver.find_element(By.XPATH, ".//button[@type='submit']")
+
+	def test_new_membership_missing_dates(self):
+		self.name.send_keys("Toto")
+		self.m_type.select_by_visible_text("Custom")
+		self.submit.send_keys(Keys.ENTER)
+		self.check_string_in_form_err("You have selected a custom membership but have not set a renewal date")
+		self.check_string_in_form_err("You have selected a custom membership but have not set a valid custom period")
+
+	def test_new_membership_past_date(self):
+		self.name.send_keys("Toto")
+		self.m_type.select_by_visible_text("Monthly")
+		self.renewal.send_keys("2022-01-01")
+		self.submit.send_keys(Keys.ENTER)
+		self.check_string_in_form_err("The renewal date cannot be in the past")
+
+	def test_new_membership_success(self):
+		renew_date = (date.today() + timedelta(days=3)).strftime("%Y-%m-%d")
+		self.name.send_keys("Toto")
+		self.m_type.select_by_visible_text("Custom")
+		self.m_url.send_keys("http://www.toto.org")
+		self.m_num.send_keys("1234567890")
+		self.renewal.send_keys(renew_date)
+		self.custom_p.send_keys("6")
+		self.custom_u.select_by_visible_text("Weeks")
+		self.cost_val.send_keys(Keys.DELETE + "19.99")
+		self.cost_cur.select_by_visible_text("GBP")
+		self.submit.send_keys(Keys.ENTER)
+
+		sleep(1)
+		objects = Membership.objects.filter(membership_name="Toto")
+		assert objects.count() == 1
+		membership = objects[0]
+		assert membership.user == self.user
+		assert membership.membership_name == "Toto"
+		assert membership.membership_type == "CUSTOM"
+		assert membership.website_link == "http://www.toto.org"
+		assert membership.membership_number == "1234567890"
+		assert membership.renewal_date.strftime("%Y-%m-%d") == renew_date
+		assert membership.custom_period == 6
+		assert membership.custom_unit == "WEEK"
+		assert membership.reminder is False
+		assert membership.cost.amount == Decimal('19.99')
+		assert membership.cost.currency == moneyed.GBP
+
+	def check_string_in_form_err(self, string):
+		try:
+			error = WebDriverWait(self.driver, 1) \
+				.until(ec.presence_of_element_located((By.XPATH, ".//div[@class='alert mb-4']")))
+			self.assertIn(string, error.text)
+		except TimeoutException:
+			print("Non-field errors not found in form!")
+			assert False

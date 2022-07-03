@@ -15,7 +15,10 @@ def setup(request):
 
 
 @pytest.fixture(scope="function")
-def new_user():
+def new_user(request):
 	email = "juan.gomez@realtalk.com"
 	password = "PwdForTest1"
-	SiteUser.objects.create_user(email=email, password=password)
+	user = SiteUser.objects.create_user(email=email, password=password)
+	request.cls.user = user
+	yield user
+	user.delete()
