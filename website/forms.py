@@ -5,13 +5,14 @@ from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html, format_html_join
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.utils.safestring import mark_safe
-from djmoney.forms.widgets import MoneyWidget
 from .models import SiteUser, Membership
 
-help_texts = ("different from your email",
-			  "at least 8 characters",
-			  "not a common password",
-			  "not entirely numeric")
+help_texts = (
+	"different from your email",
+	"at least 8 characters",
+	"not a common password",
+	"not entirely numeric"
+)
 
 help_items = format_html(
 	mark_safe(_("Your password must be:<ul>{}</ul>")),
@@ -113,4 +114,10 @@ class MembershipEditForm(forms.ModelForm):
 
 		if validation_errors:
 			raise forms.ValidationError(validation_errors)
-		return self.cleaned_data
+
+		if mem_type == 'LIFETIME':
+			cleaned_data['renewal_date'] = None
+		if mem_type != 'CUSTOM':
+			cleaned_data['custom_period'] = None
+			cleaned_data['custom_unit'] = None
+		return cleaned_data
