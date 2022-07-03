@@ -178,7 +178,6 @@ class TestUserLoginFormSuccess(LiveServerTestCase):
 		self.user_email.send_keys("juan.gomez@realtalk.com")
 		self.user_pwd.send_keys("PwdForTest1")
 		self.login.send_keys(Keys.ENTER)
-
 		try:
 			WebDriverWait(self.driver, 2) \
 				.until(ec.url_matches(self.live_server_url + '/memberships/my-memberships'))
@@ -186,6 +185,18 @@ class TestUserLoginFormSuccess(LiveServerTestCase):
 			print("User login failed!")
 		finally:
 			self.assertURLEqual(self.driver.current_url, self.live_server_url + '/memberships/my-memberships')
+
+		logout_button = self.driver.find_element(By.ID, 'login-button')
+		logout_button.send_keys(Keys.ENTER)
+		try:
+			WebDriverWait(self.driver, 2) \
+				.until(ec.url_matches(self.live_server_url + '/index'))
+		except TimeoutException:
+			print("User logout failed!")
+		finally:
+			self.assertURLEqual(self.driver.current_url, self.live_server_url + '/')
+			login_button = self.driver.find_element(By.ID, 'login-button')
+			self.assertIn("Log in", login_button.text)
 
 
 @pytest.mark.usefixtures('setup', 'new_user')
