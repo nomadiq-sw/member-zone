@@ -337,3 +337,43 @@ class TestNewMembershipForm(LiveServerTestCase):
 		except TimeoutException:
 			print("Non-field errors not found in form!")
 			assert False
+
+
+@pytest.mark.usefixtures('setup', 'new_user', 'cookie')
+class TestMembershipEditAndDelete(LiveServerTestCase):
+
+	def setUp(self):
+		renew_date = (date.today() + timedelta(days=3))
+		membership = Membership.objects.create(
+			user=self.user,
+			membership_name="Toto",
+			membership_type="MONTHLY",
+			renewal_date=renew_date,
+			reminder=True,
+			cost=moneyed.Money(Decimal(19.99), moneyed.USD)
+		)
+		membership.save()
+
+		self.driver.get(self.live_server_url)
+		self.driver.add_cookie({'name': 'sessionid', 'value': self.cookie.value, 'secure': False, 'path': '/'})
+		self.driver.get(self.live_server_url + '/memberships/my-memberships')
+
+	def test_toggle_reminders(self):
+		assert Membership.objects.count() == 1
+		mems = Membership.objects.filter(membership_name="Toto")
+		cb = self.driver.find_element(By.XPATH, ".//input[@type='checkbox']")
+		sleep(1)  # Necessary in this case to stop test being flaky
+		cb.click()
+		assert mems[0].reminder is False
+		cb.click()
+		assert mems[0].reminder is True
+
+	def test_delete_membership(self):
+		assert Membership.objects.count() == 1
+		a_del = self.driver.find_element(By.XPATH, ".//a[contains(text(), 'Delete')]")
+		self.driver.execute_script("window.confirm = function(){return true;}")  # Needed for headless tests
+		a_del.click()
+		assert Membership.objects.count() == 0
+		self.driver.refresh()
+		t_body = self.driver.find_element(By.ID, 'membership-table-body')
+		self.assertIn("Nothing to see here", t_body.text)

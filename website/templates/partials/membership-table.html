@@ -1,32 +1,38 @@
-{% for membership in object_list %}
-  <tr class="h-auto">
-    <th class="bg-white dropdown dropdown-right dropdown-end mt-1 -mb-1">
-      <label tabindex="0"><a class="link cursor-pointer">{{ membership.membership_name }}</a></label>
-      <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
-        <li>
-          <a hx-get="{% url 'edit-membership' membership.pk %}" hx-target="#modal"
-             _="on htmx:afterRequest add .modal-open to modal">
-            Edit
-          </a>
-        </li>
-        <li>
-          <a hx-post="{% url 'delete-membership' membership.pk %}"
-             hx-confirm="Are you sure you want to delete the membership '{{ membership.membership_name }}'?"
-             hx-target="closest tr" hx-swap="delete">
-            Delete
-          </a>
-        </li>
-      </ul>
-    </th>
-    <td>{{ membership.membership_type|title }}</td>
-    <td>{{ membership.renewal_date }}</td>
-    <td class="hidden sm:table-cell items-center">
-      <input type="checkbox"
-             class="checkbox checkbox-primary border-gray-400 mt-1"
-             {% if membership.reminder %}checked{% endif %}
-             hx-patch="{% url 'toggle-reminders' membership.pk %}"
-             hx-swap="none"/>
-    </td>
-    <td class="hidden sm:table-cell">{{ membership.cost }}</td>
+{%  if not object_list %}
+  <tr>
+    <td colspan="5" class="text-center italic text-lg text-gray-600">Nothing to see here</td>
   </tr>
-{% endfor %}
+{% else %}
+  {% for membership in object_list %}
+    <tr class="h-auto">
+      <th class="bg-white dropdown dropdown-right dropdown-end mt-1 -mb-1">
+        <label tabindex="0"><a class="link cursor-pointer">{{ membership.membership_name }}</a></label>
+        <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
+          <li>
+            <a hx-get="{% url 'edit-membership' membership.pk %}" hx-target="#modal"
+               _="on htmx:afterRequest add .modal-open to modal">
+              Edit
+            </a>
+          </li>
+          <li>
+            <a hx-post="{% url 'delete-membership' membership.pk %}"
+               hx-confirm="Are you sure you want to delete the membership '{{ membership.membership_name }}'?"
+               hx-target="closest tr" hx-swap="delete">
+              Delete
+            </a>
+          </li>
+        </ul>
+      </th>
+      <td>{{ membership.membership_type|title }}</td>
+      <td>{{ membership.renewal_date }}</td>
+      <td class="hidden sm:table-cell items-center">
+        <input type="checkbox"
+               class="checkbox checkbox-primary border-gray-400 mt-1"
+               {% if membership.reminder %}checked{% endif %}
+               hx-patch="{% url 'toggle-reminders' membership.pk %}"
+               hx-swap="none"/>
+      </td>
+      <td class="hidden sm:table-cell">{{ membership.cost }}</td>
+    </tr>
+  {% endfor %}
+{% endif %}

@@ -1,5 +1,4 @@
 import datetime
-
 from django.template.loader import get_template
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
