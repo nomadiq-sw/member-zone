@@ -267,15 +267,12 @@ class TestPasswordResetForm(LiveServerTestCase):
 			self.assertURLEqual(self.driver.current_url, self.live_server_url + '/password-reset/invalid')
 
 
-@pytest.mark.usefixtures('setup', 'new_user')
+@pytest.mark.usefixtures('setup', 'new_user', 'cookie')
 class TestNewMembershipForm(LiveServerTestCase):
 
 	def setUp(self):
-		self.client.login(username="juan.gomez@realtalk.com", password="PwdForTest1")
-		cookie = self.client.cookies['sessionid']
-		self.driver.get(self.live_server_url + '/index')
-		self.driver.add_cookie({'name': 'sessionid', 'value': cookie.value, 'secure': False, 'path': '/'})
-		self.driver.refresh()
+		self.driver.get(self.live_server_url)
+		self.driver.add_cookie({'name': 'sessionid', 'value': self.cookie.value, 'secure': False, 'path': '/'})
 		self.driver.get(self.live_server_url + '/memberships/my-memberships')
 
 		self.name = self.driver.find_element(By.ID, 'id_membership_name')

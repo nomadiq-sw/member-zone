@@ -22,3 +22,12 @@ def new_user(request):
 	request.cls.user = user
 	yield user
 	user.delete()
+
+
+@pytest.fixture(scope="function")
+def cookie(request, new_user, client):
+	client.force_login(new_user)
+	cookie = client.cookies['sessionid']
+	request.cls.cookie = cookie
+	yield cookie
+	client.logout()
