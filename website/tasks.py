@@ -2,39 +2,51 @@ from celery import shared_task
 from datetime import datetime, timedelta
 from dateutil.relativedelta import *
 from django.db import transaction
+from django.template.loader import get_template
+from django.core.mail import send_mail, BadHeaderError
+from smtplib import SMTPException
+
+import config.settings
 from .models import Membership, SiteUser
 from celery.utils.log import get_task_logger
 
 logger = get_task_logger(__name__)
 
 
+# In the following functions we declare overlapping reminder periods so that users get
+# two reminders of each expiry date with appropriate advance warning in each case:
 def day_reminders():
-	qsd1 = Membership.objects.filter(membership_type__in=('WEEKLY', 'FIXED'))
+	qsd1 = Membership.objects.filter(membership_type__in=('WEEKLY', 'MONTHLY'))
 	qsd2 = Membership.objects.filter(
 		membership_type__in='CUSTOM',
 		custom_unit='DAY',
-		custom_period__range=(2, 14)
+		custom_period__lte=90
 	)
 	qsd3 = Membership.objects.filter(
 		membership_type='CUSTOM',
 		custom_unit='WEEK',
-		custom_period__lte=2
+		custom_period__lte=12
 	)
-	return (qsd1.union(qsd2, qsd3)) \
+	qsd4 = Membership.objects.filter(
+		membership_type='CUSTOM',
+		custom_unit='MONTH',
+		custom_period__lte=3
+	)
+	return (qsd1.union(qsd2, qsd3, qsd4)) \
 		.intersection(Membership.objects.filter(reminder=True, renewal_date=datetime.today()+timedelta(days=1)))
 
 
 def week_reminders():
-	qsw1 = Membership.objects.filter(membership_type__in=('MONTHLY', 'FIXED'))
+	qsw1 = Membership.objects.filter(membership_type__in=('MONTHLY', 'ANNUAL', 'FIXED'))
 	qsw2 = Membership.objects.filter(
 		membership_type='CUSTOM',
 		custom_unit='DAY',
-		custom_period__range=(15, 90)
+		custom_period__range=(30, 90)
 	)
 	qsw3 = Membership.objects.filter(
 		membership_type='CUSTOM',
 		custom_unit='WEEK',
-		custom_period__range=(3, 12)
+		custom_period__range=(4, 12)
 	)
 	qsw4 = Membership.objects.filter(
 		membership_type='CUSTOM',
@@ -72,6 +84,7 @@ def month_reminders():
 		.intersection(Membership.objects.filter(reminder=True, renewal_date=datetime.today()+timedelta(days=30)))
 
 
+# We also send free trial expiry reminders 7 days before and 1 day before in each case:
 def free_trial_expiry_reminders():
 	return Membership.objects.filter(
 		reminder=True,
@@ -81,9 +94,54 @@ def free_trial_expiry_reminders():
 
 @shared_task(name="reminder_emails")
 def reminder_emails():
-	today = datetime.today()
 	users = SiteUser.objects.all()
-	pass
+	for user in users:
+		renewal_mail = html_renewal_email(user)
+		free_trial_mail = html_free_trial_expiry_email(user)
+		if renewal_mail:
+			try:
+				subject = "A reminder from MemberZone: memberships coming up for renewal"
+				send_mail(subject, renewal_mail, "admin@member-zone.com", [user.email])
+			except BadHeaderError as e:
+				logger.error(f"Exception {e} while sending renewal reminder to {user.email}")
+			except SMTPException as e:
+				logger.error(f"Exception {e} while sending renewal reminder to {user.email}")
+		if free_trial_mail:
+			try:
+				subject = "A reminder from MemberZone: free trials expiring soon"
+				send_mail(subject, free_trial_mail, "admin@memberzone.com", [user.email])
+			except BadHeaderError as e:
+				logger.error(f"Exception {e} while sending free trial expiry reminder to {user.email}")
+			except SMTPException as e:
+				logger.error(f"Exception {e} while sending free trial expiry reminder to {user.email}")
+
+
+def html_renewal_email(user):
+	user_reminders = (day_reminders().union(week_reminders(), month_reminders()))\
+		.intersection(Membership.objects.filter(user=user)).order_by('renewal_date')
+	if user_reminders.count() != 0:
+		html_temp = get_template('reminders/membership_renewal_reminder_email.html')
+		c = {
+			'protocol': config.settings.PROTOCOL,
+			'domain': config.settings.DOMAIN,
+			'items': user_reminders.all(),
+		}
+		return html_temp.render(c)
+	return None
+
+
+def html_free_trial_expiry_email(user):
+	user_reminders = free_trial_expiry_reminders()\
+		.intersection(Membership.objects.filter(user=user)).order_by('free_trial_expiry')
+	if user_reminders.count() != 0:
+		html_temp = get_template('reminders/free_trial_expiry_reminder_email.html')
+		c = {
+			'protocol': config.settings.PROTOCOL,
+			'domain': config.settings.DOMAIN,
+			'items': user_reminders.all(),
+		}
+		return html_temp.render(c)
+	return None
 
 
 @shared_task(name="renewal_updates")

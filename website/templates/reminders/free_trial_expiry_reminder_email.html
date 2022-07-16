@@ -12,4 +12,26 @@
     The free trials of the following subscriptions are about to expire.
     Remember to either cancel your subscription or verify your details before the expiry date!
   </p>
+  <ul style="color:#455056; font-size:16px; line-height:24px; margin: 0 0 24px;">
+    {% for item in items %}
+      <li>
+        <span>
+          {% if item.website_link %}
+            <a target="_blank" href="{{ item.website_link }}"><strong>{{ item.membership_name }}</strong></a>
+          {% else %}
+            <strong>{{ item.membership_name }}</strong>
+          {% endif %}
+          free trial expires on {{ item.free_trial_expiry }}
+        </span>
+      </li>
+    {% endfor %}
+  </ul>
+  <p style="color:#455056; font-size:16px; line-height:24px; margin: 0 0 24px;">
+    You can update membership details or change your reminder settings by logging in using the link below:
+  </p>
+  <a target="_blank"
+     style="text-decoration:none; background-color: #1e1e2d; color: #fff; padding:10px 10px; border-radius:5px; display:block;"
+     href="{{ protocol }}://{{ domain }}{% url 'login' %}">
+    <strong>Log in</strong>
+  </a>
 {% endblock %}
