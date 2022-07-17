@@ -1,3 +1,14 @@
+# Copyright 2022 Owen M. Jones. All rights reserved.
+#
+# This file is part of MemberZone.
+#
+# MemberZone is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# MemberZone is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with MemberZone. If not, see <https://www.gnu.org/licenses/>.
 from celery import shared_task
 from datetime import datetime, timedelta
 from dateutil.relativedelta import *
@@ -101,7 +112,7 @@ def reminder_emails():
 		if renewal_mail:
 			try:
 				subject = "A reminder from MemberZone: memberships coming up for renewal"
-				send_mail(subject, renewal_mail, "admin@member-zone.com", [user.email])
+				send_mail(subject, renewal_mail, "noreply@member-zone.com", [user.email])
 			except BadHeaderError as e:
 				logger.error(f"Exception {e} while sending renewal reminder to {user.email}")
 			except SMTPException as e:
@@ -109,7 +120,7 @@ def reminder_emails():
 		if free_trial_mail:
 			try:
 				subject = "A reminder from MemberZone: free trials expiring soon"
-				send_mail(subject, free_trial_mail, "admin@memberzone.com", [user.email])
+				send_mail(subject, free_trial_mail, "noreply@memberzone.com", [user.email])
 			except BadHeaderError as e:
 				logger.error(f"Exception {e} while sending free trial expiry reminder to {user.email}")
 			except SMTPException as e:

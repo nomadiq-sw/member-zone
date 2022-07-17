@@ -1,3 +1,16 @@
+<!--
+Copyright 2022 Owen M. Jones. All rights reserved.
+
+This file is part of MemberZone.
+
+MemberZone is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+MemberZone is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with MemberZone. If not, see <https://www.gnu.org/licenses/>.
+-->
 {% load static %}
 
 <div class="navbar bg-base-100 w-screen">
@@ -10,7 +23,7 @@
     <ul class="menu menu-horizontal p-2 text-2xl">
       <li><a href="{% url 'index' %}">Home</a></li>
       <li><a href="{% url 'my-memberships' %}">Memberships</a></li>
-      <li><a>About</a></li>
+      <li><a href="{% url 'about' %}">About</a></li>
     </ul>
   </div>
   <div class="navbar-end hidden lg:flex flex-1 ml-auto">
@@ -30,7 +43,7 @@
       <ul tabindex="0" class="mt-0 mr-2 p-2 shadow menu menu-compact dropdown-content bg-base-100 rounded-box w-52">
         <li><a class="text-xl" href="{% url 'index' %}">Home</a></li>
         <li><a class="text-xl" href="{% url 'my-memberships' %}">Memberships</a></li>
-        <li><a class="text-xl">About</a></li>
+        <li><a class="text-xl" href="{% url 'about' %}">About</a></li>
         <li class="divider"></li>
         {% if user.is_authenticated %}
           <li><a href="{% url 'logout' %}" class="text-xl font-bold">Log out</a></li>

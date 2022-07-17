@@ -1,0 +1,48 @@
+<!--
+Copyright 2022 Owen M. Jones. All rights reserved.
+
+This file is part of MemberZone.
+
+MemberZone is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+MemberZone is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with MemberZone. If not, see <https://www.gnu.org/licenses/>.
+-->
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+  <div class="card card-compact w-7/8 lg:w-1/2 mx-auto">
+    <div class="card-body">
+      <h2 class="card-title">About MemberZone</h2>
+      <p class="text-lg text-justify">
+        MemberZone is developed by
+        <a class="underline hover:font-semibold" href="https://github.com/nomadiq-sw">nomadiq software</a>
+        and hosted on ...
+        The site is free to use and contains no ads, spyware or tracking cookies. Users' data is stored securely and is
+        not sold or communicated to third parties. The website is provided with no guarantee as to its fitness for a
+        particular purpose, and with the understanding that it may be removed or modified at any time at the
+        administrator's discretion.<br/><br/>
+        The project is open source, with the source code
+        <a class="underline hover:font-semibold" href="https://github.com/nomadiq-sw/member-zone">available on GitHub</a>
+        under the GNU General Public License (GNU GPLv3).<br/><br/>
+        If you have a question about the project or encounter a problem using the website, you can contact the site
+        administrator using the contact form below. We will try to get back to you as soon as possible.
+      </p>
+      <div class="divider mx-auto w-1/4"></div>
+      <h2 class="card-title">Ask a question</h2>
+      <form id="contact-form" method="post" hx-post="{% url 'submit-query' %}">
+        {% csrf_token %}
+        <div class="flex-row gap-x-4 gap-y-0">
+          {% crispy form %}
+          <button id="send-button" type="submit" class="btn btn-primary border-none">
+            Send
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

@@ -1,3 +1,14 @@
+# Copyright 2022 Owen M. Jones. All rights reserved.
+#
+# This file is part of MemberZone.
+#
+# MemberZone is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# MemberZone is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with MemberZone. If not, see <https://www.gnu.org/licenses/>.
 import datetime
 from django.template.loader import get_template
 from django.http import HttpResponse, HttpResponseRedirect
@@ -17,7 +28,7 @@ from django.db.models.query_utils import Q
 from django.db.models.functions import Lower
 
 import config.settings
-from .forms import UserRegistrationForm, UserLoginForm, MembershipEditForm
+from .forms import UserRegistrationForm, UserLoginForm, MembershipEditForm, ContactForm
 from .models import SiteUser, Membership
 
 
@@ -103,6 +114,22 @@ class EditMembershipView(LoginRequiredMixin, UpdateView):
 			return MembershipView.as_view()(request, update=True, pk=self.object.pk)
 
 
+class AboutView(TemplateView):
+	template_name = 'about.html'
+
+	def get(self, request, *args, **kwargs):
+		if request.user.is_authenticated:
+			data = {'email': request.user.email}
+		else:
+			data = None
+		self.extra_context = {'form': ContactForm(initial=data)}
+		return super().get(request, *args, **kwargs)
+
+
+def submit_query(request):
+	pass
+
+
 class LoginSignupView(View):
 
 	def get(self, request):
@@ -129,7 +156,7 @@ class LoginSignupView(View):
 					}
 					html_content = html_temp.render(c)
 					try:
-						send_mail(subject, html_content, "admin@member-zone.com", [user.email])
+						send_mail(subject, html_content, "noreply@member-zone.com", [user.email])
 						return HttpResponseRedirect(reverse('my-memberships'))
 					except BadHeaderError:
 						return HttpResponse('Invalid header found.')
@@ -172,7 +199,7 @@ class PasswordResetView(View):
 					}
 					html_content = html_temp.render(c)
 					try:
-						send_mail(subject, html_content, "admin@member-zone.com", [user.email])
+						send_mail(subject, html_content, "noreply@member-zone.com", [user.email])
 						return HttpResponseRedirect(reverse('password-reset-done'))
 					except BadHeaderError:
 						return HttpResponse('Invalid header found.')

@@ -1,3 +1,14 @@
+# Copyright 2022 Owen M. Jones. All rights reserved.
+#
+# This file is part of MemberZone.
+#
+# MemberZone is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# MemberZone is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with MemberZone. If not, see <https://www.gnu.org/licenses/>.
 from django.urls import path, reverse_lazy
 import django.contrib.auth.views as auth_views
 from website import views
@@ -17,6 +28,7 @@ urlpatterns = [
 		 name='password-reset-confirm'),
 	path('password-reset/complete', auth_views.PasswordResetCompleteView.as_view(), name='password-reset-complete'),
 	path('memberships/my-memberships', views.MembershipView.as_view(), name='my-memberships'),
+	path('about', views.AboutView.as_view(), name='about'),
 ]
 
 htmx_urlpatterns = [
@@ -24,6 +36,7 @@ htmx_urlpatterns = [
 	path('memberships/my-memberships/<int:pk>/toggle-reminders', views.toggle_reminders, name='toggle-reminders'),
 	path('memberships/my-memberships/<int:pk>/delete', views.DeleteMembershipView.as_view(), name='delete-membership'),
 	path('memberships/my-memberships/<int:pk>/edit', views.EditMembershipView.as_view(), name='edit-membership'),
+	path('about/submit-query', views.submit_query, name='submit-query')
 ]
 
 urlpatterns += htmx_urlpatterns

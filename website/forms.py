@@ -1,3 +1,14 @@
+# Copyright 2022 Owen M. Jones. All rights reserved.
+#
+# This file is part of MemberZone.
+#
+# MemberZone is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License 
+# as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+#
+# MemberZone is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+# of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License along with MemberZone. If not, see <https://www.gnu.org/licenses/>.
 import datetime
 from django import forms
 from django.contrib.auth import authenticate
@@ -121,3 +132,9 @@ class MembershipEditForm(forms.ModelForm):
 			cleaned_data['custom_period'] = None
 			cleaned_data['custom_unit'] = None
 		return cleaned_data
+
+
+class ContactForm(forms.Form):
+	email = forms.EmailField(required=True)
+	subject = forms.CharField(required=True, max_length=50)
+	message = forms.CharField(required=True, max_length=400, widget=forms.Textarea)
