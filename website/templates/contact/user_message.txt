@@ -1,0 +1,3 @@
+New message from {{ email }}:
+
+{{ message|safe }}

@@ -10,7 +10,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License along with MemberZone. If not, see <https://www.gnu.org/licenses/>.
 import datetime
-from django.template.loader import get_template
+from django.template.loader import get_template, render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy, reverse
@@ -127,7 +127,25 @@ class AboutView(TemplateView):
 
 
 def submit_query(request):
-	pass
+	if request.method == 'POST':
+		form = ContactForm(request.POST)
+		if form.is_valid():
+			data = form.cleaned_data
+			subject = data['subject']
+			txt_content = render_to_string(
+				'contact/user_message.txt',
+				{'email': data['email'], 'message': data['message']}
+			)
+			try:
+				send_mail(subject, txt_content, "noreply@member-zone.com", ["admin@member-zone.com"])
+				reuse = {'email': data['email']}
+				response = render(request, 'partials/contact-form.html', {'form': ContactForm(initial=reuse)})
+				response['HX-Trigger'] = 'submitSuccess'
+				return response
+			except BadHeaderError:
+				form.add_error(None, 'Invalid header found.')
+		form.add_error(None, "Something went wrong. Please try again.")
+		return render(request, 'partials/contact-form.html', {'form': form})
 
 
 class LoginSignupView(View):
@@ -157,9 +175,9 @@ class LoginSignupView(View):
 					html_content = html_temp.render(c)
 					try:
 						send_mail(subject, html_content, "noreply@member-zone.com", [user.email])
-						return HttpResponseRedirect(reverse('my-memberships'))
 					except BadHeaderError:
-						return HttpResponse('Invalid header found.')
+						return HttpResponse('Invalid header found')
+					return HttpResponseRedirect(reverse('my-memberships'))
 			context = {'register_form': register_form, 'login_form': UserLoginForm()}
 			return render(request, 'registration/login.html', context)
 
