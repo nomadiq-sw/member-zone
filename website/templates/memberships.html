@@ -29,8 +29,36 @@
           <th>Membership</th>
           <th>Subscription</th>
           <th>Renewal</th>
-          <th class="px-0 hidden sm:table-cell">Reminders</th>
-          <th class="hidden sm:table-cell">Cost</th>
+          <th class="px-0 pt-1 pb-2.5 hidden sm:table-cell">
+            Reminders
+            <div class="dropdown dropdown-end -ml-1">
+              <label tabindex="0" class="btn btn-circle btn-xs btn-ghost text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-4 h-4 stroke-current">
+                  <path stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                  </path>
+                </svg>
+              </label>
+              <div tabindex="0" class="card compact dropdown-content shadow bg-base-100 rounded-box">
+                <div class="card-body w-68">
+                    <p class="normal-case font-normal">
+                      Set reminders to be reminded by e-mail<br/>
+                      before each renewal date, and before<br/>
+                      expiry of free trials.
+                    </p>
+                    <p class="normal-case font-normal">
+                      In most cases you will receive two<br/>
+                      reminders before each renewal/expiry.<br/>
+                      These reminders will be sent 30 days,<br/>
+                      7 days or 1 day before renewal/expiry<br/>
+                      depending on the subscription period.
+                    </p>
+                </div>
+              </div>
+            </div>
+          </th>
+          <th class="pl-2 pr-0 hidden sm:table-cell">Cost</th>
         </tr>
         </thead>
         <tbody id="membership-table-body"

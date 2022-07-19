@@ -64,7 +64,8 @@ module.exports = {
                     ...require("daisyui/src/colors/themes")['[data-theme=light]'],
                     primary: '#2962ff',
                     'primary-focus': '#0d47a1',
-                    neutral: '#455a64'
+                    neutral: '#455a64',
+                    'neutral-content': '#f4f6f8'
                 }
             },
         ]

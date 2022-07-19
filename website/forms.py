@@ -135,6 +135,6 @@ class MembershipEditForm(forms.ModelForm):
 
 
 class ContactForm(forms.Form):
-	email = forms.EmailField(required=True)
+	email = forms.EmailField(required=True, label="Your e-mail")
 	subject = forms.CharField(required=True, max_length=50)
 	message = forms.CharField(required=True, max_length=400, widget=forms.Textarea)

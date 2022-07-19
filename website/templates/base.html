@@ -19,6 +19,7 @@ You should have received a copy of the GNU Affero General Public License along w
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MemberZone</title>
+  <link rel="shortcut icon" type="image/png" href="{% static 'images/favicon.ico' %}"/>
   <!-- Custom CSS -->
   {% tailwind_css %}
   <!-- HTMX -->
@@ -28,12 +29,14 @@ You should have received a copy of the GNU Affero General Public License along w
   <script src="https://unpkg.com/hyperscript.org@0.9.5"></script>
 </head>
 <body>
-{% include 'partials/navbar.html' %}
-<div>
-  {% block content %}
-  {% endblock %}
+<div class="flex-row flex-grow">
+  {% include 'partials/navbar.html' %}
+  <div class="pb-32">
+    {% block content %}
+    {% endblock %}
+  </div>
+  {% include 'partials/footer.html' %}
 </div>
-
 <script>
     document.body.addEventListener('htmx:configRequest', (event) => {
         event.detail.headers['X-CSRFToken'] = '{{ csrf_token }}';

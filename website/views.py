@@ -225,3 +225,11 @@ class PasswordResetView(View):
 				return HttpResponseRedirect(reverse('password-reset-invalid'))
 		else:
 			return HttpResponseRedirect(reverse('login'))
+
+
+class TermsAndConditionsView(TemplateView):
+	template_name = 'terms-conditions.html'
+
+
+class PrivacyPolicyView(TemplateView):
+	template_name = 'privacy-policy.html'

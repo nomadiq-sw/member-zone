@@ -5,7 +5,7 @@
 {% else %}
   {% for membership in object_list %}
     <tr class="h-auto">
-      <th class="bg-white dropdown dropdown-right dropdown-end mt-1 -mb-1">
+      <th class="dropdown dropdown-right dropdown-end mt-1 -mb-1">
         <label tabindex="0"><a class="link cursor-pointer">{{ membership.membership_name }}</a></label>
         <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
           <li>
@@ -32,7 +32,7 @@
                hx-patch="{% url 'toggle-reminders' membership.pk %}"
                hx-swap="none"/>
       </td>
-      <td class="hidden sm:table-cell">{{ membership.cost }}</td>
+      <td class="pl-2 pr-0 hidden sm:table-cell">{{ membership.cost }}</td>
     </tr>
   {% endfor %}
 {% endif %}
