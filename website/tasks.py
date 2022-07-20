@@ -112,7 +112,7 @@ def reminder_emails():
 		if renewal_mail:
 			try:
 				subject = "A reminder from MemberZone: memberships coming up for renewal"
-				send_mail(subject, renewal_mail, "noreply@member-zone.com", [user.email])
+				send_mail(subject, renewal_mail, f"noreply@{config.settings.ROOT_DOMAIN}", [user.email])
 			except BadHeaderError as e:
 				logger.error(f"Exception {e} while sending renewal reminder to {user.email}")
 			except SMTPException as e:
@@ -120,7 +120,7 @@ def reminder_emails():
 		if free_trial_mail:
 			try:
 				subject = "A reminder from MemberZone: free trials expiring soon"
-				send_mail(subject, free_trial_mail, "noreply@memberzone.com", [user.email])
+				send_mail(subject, free_trial_mail, f"noreply@{config.settings.ROOT_DOMAIN}", [user.email])
 			except BadHeaderError as e:
 				logger.error(f"Exception {e} while sending free trial expiry reminder to {user.email}")
 			except SMTPException as e:

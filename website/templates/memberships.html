@@ -6,7 +6,7 @@
 {% money_localize money %}
 
 {% block content %}
-  <div class="card items-center pt-8">
+  <div class="card items-center pt-8" style="min-height: 24rem">
     <h2 class="text-xl text-center w-3/4">Welcome to MemberZone! Here are your memberships.</h2>
     <div class="divider w-1/2 mx-auto"></div>
     <script type="text/hyperscript">
@@ -40,7 +40,7 @@
                   </path>
                 </svg>
               </label>
-              <div tabindex="0" class="card compact dropdown-content shadow bg-base-100 rounded-box">
+              <div tabindex="0" class="card compact dropdown-content shadow bg-base-100 rounded-box" style="z-index: 12">
                 <div class="card-body w-68">
                     <p class="normal-case font-normal">
                       Set reminders to be reminded by e-mail<br/>
@@ -70,7 +70,8 @@
       </table>
       <button _="on htmx:afterRequest add .modal-open to #modal"
               hx-get="{% url 'my-memberships' %}" hx-select="#modal-box" hx-target="#modal"
-              class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14">
+              class="mx-auto md:ml-2 btn btn-primary btn-square border-none basis-14"
+              value="New">
         New
       </button>
     </div>

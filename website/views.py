@@ -131,13 +131,18 @@ def submit_query(request):
 		form = ContactForm(request.POST)
 		if form.is_valid():
 			data = form.cleaned_data
-			subject = data['subject']
+			subject = "New message from site user"
 			txt_content = render_to_string(
 				'contact/user_message.txt',
-				{'email': data['email'], 'message': data['message']}
+				{'email': data['email'], 'subject': data['subject'], 'message': data['message']}
 			)
 			try:
-				send_mail(subject, txt_content, "noreply@member-zone.com", ["admin@member-zone.com"])
+				send_mail(
+					subject,
+					txt_content,
+					f"noreply@{config.settings.ROOT_DOMAIN}",
+					[f"admin@{config.settings.ROOT_DOMAIN}"]
+				)
 				reuse = {'email': data['email']}
 				response = render(request, 'partials/contact-form.html', {'form': ContactForm(initial=reuse)})
 				response['HX-Trigger'] = 'submitSuccess'
@@ -174,7 +179,7 @@ class LoginSignupView(View):
 					}
 					html_content = html_temp.render(c)
 					try:
-						send_mail(subject, html_content, "noreply@member-zone.com", [user.email])
+						send_mail(subject, html_content, f"noreply@{config.settings.ROOT_DOMAIN}", [user.email])
 					except BadHeaderError:
 						return HttpResponse('Invalid header found')
 					return HttpResponseRedirect(reverse('my-memberships'))
@@ -217,7 +222,7 @@ class PasswordResetView(View):
 					}
 					html_content = html_temp.render(c)
 					try:
-						send_mail(subject, html_content, "noreply@member-zone.com", [user.email])
+						send_mail(subject, html_content, f"noreply@{config.settings.ROOT_DOMAIN}", [user.email])
 						return HttpResponseRedirect(reverse('password-reset-done'))
 					except BadHeaderError:
 						return HttpResponse('Invalid header found.')
@@ -229,7 +234,9 @@ class PasswordResetView(View):
 
 class TermsAndConditionsView(TemplateView):
 	template_name = 'terms-conditions.html'
+	extra_context = {'domain': config.settings.DOMAIN, 'root_domain': config.settings.ROOT_DOMAIN}
 
 
 class PrivacyPolicyView(TemplateView):
 	template_name = 'privacy-policy.html'
+	extra_context = {'domain': config.settings.DOMAIN, 'root_domain': config.settings.ROOT_DOMAIN}

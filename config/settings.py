@@ -42,6 +42,7 @@ ALLOWED_HOSTS = []
 PROTOCOL = 'http'
 
 DOMAIN = "127.0.0.1:8000"
+ROOT_DOMAIN = "member-zone.com"
 
 APPEND_SLASH = False
 

@@ -9,10 +9,12 @@
 # of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License along with MemberZone. If not, see <https://www.gnu.org/licenses/>.
+import time
+
 import moneyed
 import pytest
 import re
-from django.test import LiveServerTestCase
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
@@ -29,7 +31,7 @@ from website.models import SiteUser, Membership
 
 # Create your tests here.
 @pytest.mark.usefixtures('setup')
-class TestUserRegistrationFormErrors(LiveServerTestCase):
+class TestUserRegistrationFormErrors(StaticLiveServerTestCase):
 
 	def setUp(self):
 		self.driver.get(self.live_server_url + '/memberships/login')
@@ -105,7 +107,7 @@ class TestUserRegistrationFormErrors(LiveServerTestCase):
 
 
 @pytest.mark.usefixtures('setup')
-class TestUserRegistrationFormSuccess(LiveServerTestCase):
+class TestUserRegistrationFormSuccess(StaticLiveServerTestCase):
 
 	def setUp(self):
 		self.driver.get(self.live_server_url + '/memberships/login')
@@ -133,7 +135,7 @@ class TestUserRegistrationFormSuccess(LiveServerTestCase):
 
 
 @pytest.mark.usefixtures('setup')
-class TestUserLoginFormErrors(LiveServerTestCase):
+class TestUserLoginFormErrors(StaticLiveServerTestCase):
 
 	def setUp(self):
 		self.delay = 2
@@ -177,7 +179,7 @@ class TestUserLoginFormErrors(LiveServerTestCase):
 
 
 @pytest.mark.usefixtures('setup', 'new_user')
-class TestUserLoginFormSuccess(LiveServerTestCase):
+class TestUserLoginFormSuccess(StaticLiveServerTestCase):
 
 	def setUp(self):
 		self.driver.get(self.live_server_url + '/memberships/login')
@@ -207,11 +209,11 @@ class TestUserLoginFormSuccess(LiveServerTestCase):
 		finally:
 			self.assertURLEqual(self.driver.current_url, self.live_server_url + '/')
 			login_button = self.driver.find_element(By.ID, 'login-button')
-			self.assertIn("Log in", login_button.text)
+			self.assertIn("LOG IN", login_button.text)
 
 
 @pytest.mark.usefixtures('setup', 'new_user')
-class TestPasswordResetForm(LiveServerTestCase):
+class TestPasswordResetForm(StaticLiveServerTestCase):
 
 	def setUp(self):
 		self.driver.get(self.live_server_url + '/password-reset')
@@ -279,13 +281,15 @@ class TestPasswordResetForm(LiveServerTestCase):
 
 
 @pytest.mark.usefixtures('setup', 'new_user', 'cookie')
-class TestNewMembershipForm(LiveServerTestCase):
+class TestNewMembershipForm(StaticLiveServerTestCase):
 
 	def setUp(self):
 		self.driver.get(self.live_server_url)
 		self.driver.add_cookie({'name': 'sessionid', 'value': self.cookie.value, 'secure': False, 'path': '/'})
 		self.driver.get(self.live_server_url + '/memberships/my-memberships')
-
+		self.new = self.driver.find_element(By.XPATH, ".//button[@value='New']")
+		self.new.send_keys(Keys.ENTER)
+		sleep(1)  # Modal elements become stale after open *only in some cases*, so cannot use ec.staleness_of
 		self.name = self.driver.find_element(By.ID, 'id_membership_name')
 		self.m_type = Select(self.driver.find_element(By.NAME, 'membership_type'))
 		self.m_url = self.driver.find_element(By.ID, 'id_website_link')
@@ -367,7 +371,7 @@ class TestNewMembershipForm(LiveServerTestCase):
 
 
 @pytest.mark.usefixtures('setup', 'new_user', 'cookie')
-class TestMembershipEditAndDelete(LiveServerTestCase):
+class TestMembershipEditAndDelete(StaticLiveServerTestCase):
 
 	def setUp(self):
 		renew_date = (date.today() + timedelta(days=3))
@@ -396,6 +400,8 @@ class TestMembershipEditAndDelete(LiveServerTestCase):
 		assert mems[0].reminder is self.membership.reminder
 
 	def test_delete_membership(self):
+		a_name = self.driver.find_element(By.XPATH, ".//a[contains(text(), '%s')]" % self.membership.membership_name)
+		a_name.click()
 		a_del = self.driver.find_element(By.XPATH, ".//a[contains(text(), 'Delete')]")
 		self.driver.execute_script("window.confirm = function(){return true;}")  # Needed for headless tests
 		a_del.click()
@@ -405,6 +411,8 @@ class TestMembershipEditAndDelete(LiveServerTestCase):
 		self.assertIn("Nothing to see here", t_body.text)
 
 	def test_edit_membership_details(self):
+		a_name = self.driver.find_element(By.XPATH, ".//a[contains(text(), '%s')]" % self.membership.membership_name)
+		a_name.click()
 		a_edit = self.driver.find_element(By.XPATH, ".//a[contains(text(), 'Edit')]")
 		WebDriverWait(self.driver, 1).until(ec.element_to_be_clickable(a_edit))
 		a_edit.click()
@@ -452,3 +460,31 @@ class TestMembershipEditAndDelete(LiveServerTestCase):
 		t_body = self.driver.find_element(By.ID, 'membership-table-body')
 		self.assertIn("Annual", t_body.text)
 		self.assertIn("$14.99", t_body.text)
+
+
+@pytest.mark.usefixtures('setup')
+class TestContactForm(StaticLiveServerTestCase):
+
+	def test_contact_form(self):
+		self.driver.get(self.live_server_url + '/about')
+		email = self.driver.find_element(By.ID, 'id_email')
+		subject = self.driver.find_element(By.ID, 'id_subject')
+		message = self.driver.find_element(By.ID, 'id_message')
+		send = self.driver.find_element(By.ID, 'send-button')
+
+		email.send_keys("juan.gomez@realtalk.com")
+		subject.send_keys("A question")
+		message.send_keys("What's happening?")
+		send.send_keys(Keys.ENTER)
+		try:
+			WebDriverWait(self.driver, 1) \
+				.until(ec.visibility_of_element_located((By.ID, 'submit-success')))
+		except TimeoutException:
+			print("Success alert did not show!")
+		finally:
+			self.assertEqual(len(mail.outbox), 1)
+			self.assertEqual(mail.outbox[0].subject, "New message from site user")
+			email_content = mail.outbox[0].body
+			self.assertIn("New message from juan.gomez@realtalk.com", email_content)
+			self.assertIn("Subject: A question", email_content)
+			self.assertIn("What's happening?", email_content)

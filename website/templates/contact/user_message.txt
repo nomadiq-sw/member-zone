@@ -1,3 +1,4 @@
-New message from {{ email }}:
+New message from {{ email }}
+Subject: {{ subject|safe }}
 
 {{ message|safe }}

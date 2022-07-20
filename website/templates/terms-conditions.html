@@ -6,7 +6,7 @@
       <h2 class="card-title justify-center">Terms and Conditions</h2>
       <p class="text-justify">
         These Terms and Conditions constitute a legally binding agreement between you ('you', 'your') as the user
-        of the website <a class="link hover:font-semibold" href="{% url 'index' %}">www.member-zone.com</a>
+        of the website <a class="link hover:font-semibold" href="{% url 'index' %}">{{ domain }}</a>
         ('the/this website') and Owen M. Jones ('we', 'us', 'our'), acting in an individual capacity as the
         developer and administrator of the website. You agree that by accessing this website, you have read, understood
         and agree to be bound by all of these Terms and Conditions. If you do not agree to be bound by any of these
@@ -160,7 +160,7 @@
       <p class="text-justify">
         We care about your privacy and the security of your data. Please review the Privacy Policy available at
         <a class="link hover:font-semibold" target="_blank" href="{% url 'privacy-policy' %}">
-          www.member-zone.com/about/privacy-policy</a>.
+          {{ domain }}/about/privacy-policy</a>.
         By continuing to use this website, you agree to the use of your data as described in the Privacy Policy.
       </p>
       <h3 class="text-md pt-2 font-semibold">Disclaimer</h3>
@@ -274,8 +274,9 @@
       <h3 class="text-md pt-2 font-semibold">Contact Us</h3>
       <p class="text-justify">
         In order to resolve any complaint regarding this website or dispute regarding these Terms and Conditions,
-        please contact us by e-mail:<br/>
-        <strong>admin@member-zone.com</strong>
+        please contact us:<br/>
+        <strong>E-mail:</strong> admin@{{ root_domain }}<br/>
+        <strong>Telephone:</strong> +33 7 83 68 61 39
       </p>
     </div>
   </div>
