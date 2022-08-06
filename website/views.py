@@ -12,13 +12,14 @@
 import datetime
 from django.template.loader import get_template, render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
+from django.utils.html import strip_tags
 from django.views.generic import View, TemplateView, ListView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.core.mail import BadHeaderError, send_mail
+from django.core.mail import BadHeaderError, send_mail, EmailMultiAlternatives
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -140,8 +141,8 @@ def submit_query(request):
 				send_mail(
 					subject,
 					txt_content,
-					f"noreply@{config.settings.ROOT_DOMAIN}",
-					[f"admin@{config.settings.ROOT_DOMAIN}"]
+					f"admin@{config.settings.ROOT_DOMAIN}",
+					[config.settings.EMAIL_HOST_USER]
 				)
 				reuse = {'email': data['email']}
 				response = render(request, 'partials/contact-form.html', {'form': ContactForm(initial=reuse)})
@@ -178,8 +179,16 @@ class LoginSignupView(View):
 						'domain': config.settings.DOMAIN,
 					}
 					html_content = html_temp.render(c)
+					text_content = strip_tags(html_content)
+					email = EmailMultiAlternatives(
+						subject,
+						text_content,
+						f"noreply@{config.settings.ROOT_DOMAIN}",
+						[user.email]
+					)
+					email.attach_alternative(html_content, 'text/html')
 					try:
-						send_mail(subject, html_content, f"noreply@{config.settings.ROOT_DOMAIN}", [user.email])
+						email.send()
 					except BadHeaderError:
 						return HttpResponse('Invalid header found')
 					return HttpResponseRedirect(reverse('my-memberships'))
@@ -221,8 +230,16 @@ class PasswordResetView(View):
 						'token': default_token_generator.make_token(user),
 					}
 					html_content = html_temp.render(c)
+					text_content = strip_tags(html_content)
+					email = EmailMultiAlternatives(
+						subject,
+						text_content,
+						f"noreply@{config.settings.ROOT_DOMAIN}",
+						[user.email]
+					)
+					email.attach_alternative(html_content, 'text/html')
 					try:
-						send_mail(subject, html_content, f"noreply@{config.settings.ROOT_DOMAIN}", [user.email])
+						email.send()
 						return HttpResponseRedirect(reverse('password-reset-done'))
 					except BadHeaderError:
 						return HttpResponse('Invalid header found.')
