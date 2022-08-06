@@ -162,10 +162,10 @@ def renewal_updates():
 	with transaction.atomic():
 		for mem in mems:
 			if mem.membership_type == 'CUSTOM' and mem.custom_unit == 'DAY':
-				mem.renewal_date += timedelta(days=mem.custom_period)
+				mem.renewal_date += timedelta(days=float(mem.custom_period))
 			elif mem.membership_type == 'WEEKLY' or (mem.membership_type == 'CUSTOM' and mem.custom_unit == 'WEEK'):
 				n = mem.custom_period or 1
-				mem.renewal_date += timedelta(weeks=n)
+				mem.renewal_date += timedelta(weeks=float(n))
 			elif mem.membership_type == 'MONTHLY' or (mem.membership_type == 'CUSTOM' and mem.custom_unit == 'MONTH'):
 				n = mem.custom_period or 1
 				mem.renewal_date += relativedelta(months=+n)
