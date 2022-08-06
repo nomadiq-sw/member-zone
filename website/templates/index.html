@@ -10,7 +10,7 @@
         <th class="pl-2 text-left">Membership</th>
         <th class="p-0">Subscription</th>
         <th class="p-0">Renewal</th>
-        <th class="p-0 w-16">Cost</th>
+        <th class="p-0 w-16 hidden sm:table-cell">Cost</th>
       </tr>
       </thead>
       <tbody class="flex-1 sm:flex-none">
@@ -19,7 +19,7 @@
           <th class="pl-2 truncate text-left">{{ item.name }}</th>
           <td class="p-0">{{ item.period }}</td>
           <td class="p-0">{{ item.date }}</td>
-          <td class="p-0">{{ item.cost }}</td>
+          <td class="p-0 w-16 hidden sm:table-cell">{{ item.cost }}</td>
         </tr>
       {% endfor %}
       </tbody>
