@@ -14,10 +14,6 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@tailwindcss/aspect-ratio": "^0.4.0",
-    "@tailwindcss/forms": "^0.4.0",
-    "@tailwindcss/line-clamp": "^0.3.1",
-    "@tailwindcss/typography": "^0.5.0",
     "cross-env": "^7.0.3",
     "postcss": "^8.4.5",
     "postcss-import": "^14.0.2",

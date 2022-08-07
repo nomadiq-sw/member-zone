@@ -3,7 +3,7 @@
     "description": "Run the tailwind build step before django's collectstatic",
     "version": "1.0.0",
     "engines": {
-        "node": "17.9.0"
+        "node": "18.x"
     },
     "scripts": {
         "heroku-prebuild": "cd theme/static_src && npm ci",
