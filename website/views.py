@@ -195,7 +195,7 @@ class LoginSignupView(View):
 			return render(request, 'registration/login.html', context)
 
 		elif request.POST.get('submit') == 'Log in':
-			login_form = UserLoginForm(request.POST)
+			login_form = UserLoginForm(data=request.POST)
 			if login_form.is_valid():
 				login(request, login_form.get_user())
 				return HttpResponseRedirect(reverse('my-memberships'))
