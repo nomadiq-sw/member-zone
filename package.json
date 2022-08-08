@@ -6,8 +6,7 @@
         "node": "18.x"
     },
     "scripts": {
-        "heroku-prebuild": "cd theme/static_src && npm ci",
-        "heroku-postbuild": "cd theme/static_src && npm run build"
+        "heroku-prebuild": "cd theme/static_src && npm ci"
     },
   "dependencies": {
     "daisyui": "^2.0.9",
