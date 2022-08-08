@@ -14,8 +14,10 @@ from django import forms
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html, format_html_join
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordResetForm
 from django.utils.safestring import mark_safe
+from captcha.fields import ReCaptchaField
+from captcha.widgets import ReCaptchaV3
 from .models import SiteUser, Membership
 
 help_texts = (
@@ -34,10 +36,11 @@ help_items = format_html(
 # Create your forms here.
 class UserRegistrationForm(UserCreationForm):
 	email = forms.EmailField(required=True)
+	captcha = ReCaptchaField(label='', label_suffix='', widget=ReCaptchaV3)
 
 	class Meta:
 		model = SiteUser
-		fields = ('email', 'password1', 'password2')
+		fields = ('email', 'password1', 'password2', 'captcha')
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -59,7 +62,7 @@ class UserLoginForm(AuthenticationForm):
 
 	class Meta:
 		model = SiteUser
-		fields = {"email", "password"}
+		fields = {'email', 'password'}
 
 	def clean(self):
 		email = self.cleaned_data['username'].lower()  # Note that form returns 'username' despite model using 'email'
@@ -138,3 +141,11 @@ class ContactForm(forms.Form):
 	email = forms.EmailField(required=True, label="Your e-mail")
 	subject = forms.CharField(required=True, max_length=50)
 	message = forms.CharField(required=True, max_length=400, widget=forms.Textarea)
+	captcha = ReCaptchaField(label='', label_suffix='', widget=ReCaptchaV3)
+
+
+class CaptchaPasswordResetForm(PasswordResetForm):
+	captcha = ReCaptchaField(label='', label_suffix='', widget=ReCaptchaV3)
+
+	class Meta:
+		fields = {'email', 'captcha'}

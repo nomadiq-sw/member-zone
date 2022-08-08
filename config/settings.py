@@ -40,6 +40,10 @@ NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = str(os.getenv('SECRET_KEY'))
 
+RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_SITE_KEY'))
+RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_SECRET_KEY'))
+RECAPTCHA_REQUIRED_SCORE = 0.5
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
@@ -73,6 +77,7 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'djmoney',
+	'captcha',
 	'django_celery_beat',
 	'whitenoise.runserver_nostatic',
 ]

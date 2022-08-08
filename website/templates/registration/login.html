@@ -9,12 +9,15 @@
         <p class="p-4 text-center">
           Please <strong>log in</strong> with your e-mail address and password to access your memberships
         </p>
-        <form class="p-4 w-full" method="post" action="{% url 'login' %}">
+        <form id="login-form" class="p-4 w-full" method="post" action="{% url 'login' %}">
           {% csrf_token %}
           {{ login_form|crispy }}
           <a class="link text-neutral hover:text-black" href={% url 'password-reset' %}>I forgot my password</a>
           <div class="card-actions mt-4">
-            <input class="btn btn-primary" type="submit" name="submit" value="Log in">
+            <input class="btn btn-primary"
+                   type="submit"
+                   name="submit"
+                   value="Log in">
           </div>
         </form>
       </div>
@@ -29,11 +32,14 @@
           and
           <a class="link hover:text-black" target="_blank" href="{% url 'privacy-policy' %}">privacy policy</a>.
         </p>
-        <form class="p-4 w-full" method="post" action="{% url 'login' %}">
+        <form id="register-form" class="p-4 w-full" method="post" action="{% url 'login' %}">
           {% csrf_token %}
           {{ register_form|crispy }}
           <div class="card-actions mt-4">
-            <input class="btn btn-primary" type="submit" name="submit" value="Register">
+            <input class="btn btn-primary"
+                   type="submit"
+                   name="submit"
+                   value="Register">
           </div>
         </form>
       </div>

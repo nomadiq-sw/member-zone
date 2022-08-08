@@ -23,13 +23,12 @@ from django.core.mail import BadHeaderError, send_mail, EmailMultiAlternatives
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models.query_utils import Q
 from django.db.models.functions import Lower
 
 import config.settings
-from .forms import UserRegistrationForm, UserLoginForm, MembershipEditForm, ContactForm
+from .forms import UserRegistrationForm, UserLoginForm, MembershipEditForm, ContactForm, CaptchaPasswordResetForm
 from .models import SiteUser, Membership
 
 
@@ -196,7 +195,7 @@ class LoginSignupView(View):
 			return render(request, 'registration/login.html', context)
 
 		elif request.POST.get('submit') == 'Log in':
-			login_form = UserLoginForm(data=request.POST)
+			login_form = UserLoginForm(request.POST)
 			if login_form.is_valid():
 				login(request, login_form.get_user())
 				return HttpResponseRedirect(reverse('my-memberships'))
@@ -211,11 +210,11 @@ class PasswordResetView(View):
 	def get(self, request):
 		if request.user.is_authenticated:
 			return HttpResponseRedirect(reverse('logout'))
-		pwd_reset_form = PasswordResetForm()
+		pwd_reset_form = CaptchaPasswordResetForm()
 		return render(request, 'registration/password_reset.html', context={'password_reset_form': pwd_reset_form})
 
 	def post(self, request):
-		password_reset_form = PasswordResetForm(request.POST)
+		password_reset_form = CaptchaPasswordResetForm(request.POST)
 		if password_reset_form.is_valid():
 			email = password_reset_form.cleaned_data['email']
 			users = SiteUser.objects.filter(Q(email=email))
