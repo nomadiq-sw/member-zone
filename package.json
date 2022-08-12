@@ -1,4 +1,13 @@
 {
+    "name": "member-zone",
+    "description": "Run the tailwind build step before django's collectstatic",
+    "version": "1.0.0",
+    "engines": {
+        "node": "18.x"
+    },
+    "scripts": {
+        "heroku-prebuild": "cd theme/static_src && npm ci"
+    },
   "dependencies": {
     "daisyui": "^2.0.9",
     "depcheck": "^1.4.3",

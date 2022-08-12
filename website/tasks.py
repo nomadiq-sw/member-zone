@@ -14,8 +14,10 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import *
 from django.db import transaction
 from django.template.loader import get_template
-from django.core.mail import send_mail, BadHeaderError
+from django.core.mail import send_mail, BadHeaderError, EmailMultiAlternatives
 from smtplib import SMTPException
+
+from django.utils.html import strip_tags
 
 import config.settings
 from .models import Membership, SiteUser
@@ -112,7 +114,15 @@ def reminder_emails():
 		if renewal_mail:
 			try:
 				subject = "A reminder from MemberZone: memberships coming up for renewal"
-				send_mail(subject, renewal_mail, f"noreply@{config.settings.ROOT_DOMAIN}", [user.email])
+				text_content = strip_tags(renewal_mail)
+				email = EmailMultiAlternatives(
+					subject,
+					text_content,
+					f"noreply@{config.settings.ROOT_DOMAIN}",
+					[user.email]
+				)
+				email.attach_alternative(renewal_mail, 'text/html')
+				email.send()
 			except BadHeaderError as e:
 				logger.error(f"Exception {e} while sending renewal reminder to {user.email}")
 			except SMTPException as e:
@@ -120,7 +130,15 @@ def reminder_emails():
 		if free_trial_mail:
 			try:
 				subject = "A reminder from MemberZone: free trials expiring soon"
-				send_mail(subject, free_trial_mail, f"noreply@{config.settings.ROOT_DOMAIN}", [user.email])
+				text_content = strip_tags(free_trial_mail)
+				email = EmailMultiAlternatives(
+					subject,
+					text_content,
+					f"noreply@{config.settings.ROOT_DOMAIN}",
+					[user.email]
+				)
+				email.attach_alternative(free_trial_mail, 'text/html')
+				email.send()
 			except BadHeaderError as e:
 				logger.error(f"Exception {e} while sending free trial expiry reminder to {user.email}")
 			except SMTPException as e:
@@ -162,10 +180,10 @@ def renewal_updates():
 	with transaction.atomic():
 		for mem in mems:
 			if mem.membership_type == 'CUSTOM' and mem.custom_unit == 'DAY':
-				mem.renewal_date += timedelta(days=mem.custom_period)
+				mem.renewal_date += timedelta(days=float(mem.custom_period))
 			elif mem.membership_type == 'WEEKLY' or (mem.membership_type == 'CUSTOM' and mem.custom_unit == 'WEEK'):
 				n = mem.custom_period or 1
-				mem.renewal_date += timedelta(weeks=n)
+				mem.renewal_date += timedelta(weeks=float(n))
 			elif mem.membership_type == 'MONTHLY' or (mem.membership_type == 'CUSTOM' and mem.custom_unit == 'MONTH'):
 				n = mem.custom_period or 1
 				mem.renewal_date += relativedelta(months=+n)

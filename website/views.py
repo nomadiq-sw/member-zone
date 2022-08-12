@@ -12,23 +12,23 @@
 import datetime
 from django.template.loader import get_template, render_to_string
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy, reverse
+from django.utils.html import strip_tags
 from django.views.generic import View, TemplateView, ListView
 from django.views.generic.edit import DeleteView, UpdateView
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
-from django.core.mail import BadHeaderError, send_mail
+from django.core.mail import BadHeaderError, send_mail, EmailMultiAlternatives
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models.query_utils import Q
 from django.db.models.functions import Lower
 
 import config.settings
-from .forms import UserRegistrationForm, UserLoginForm, MembershipEditForm, ContactForm
+from .forms import UserRegistrationForm, UserLoginForm, MembershipEditForm, ContactForm, CaptchaPasswordResetForm
 from .models import SiteUser, Membership
 
 
@@ -140,8 +140,8 @@ def submit_query(request):
 				send_mail(
 					subject,
 					txt_content,
-					f"noreply@{config.settings.ROOT_DOMAIN}",
-					[f"admin@{config.settings.ROOT_DOMAIN}"]
+					f"admin@{config.settings.ROOT_DOMAIN}",
+					[config.settings.EMAIL_HOST_USER]
 				)
 				reuse = {'email': data['email']}
 				response = render(request, 'partials/contact-form.html', {'form': ContactForm(initial=reuse)})
@@ -178,8 +178,16 @@ class LoginSignupView(View):
 						'domain': config.settings.DOMAIN,
 					}
 					html_content = html_temp.render(c)
+					text_content = strip_tags(html_content)
+					email = EmailMultiAlternatives(
+						subject,
+						text_content,
+						f"noreply@{config.settings.ROOT_DOMAIN}",
+						[user.email]
+					)
+					email.attach_alternative(html_content, 'text/html')
 					try:
-						send_mail(subject, html_content, f"noreply@{config.settings.ROOT_DOMAIN}", [user.email])
+						email.send()
 					except BadHeaderError:
 						return HttpResponse('Invalid header found')
 					return HttpResponseRedirect(reverse('my-memberships'))
@@ -202,11 +210,11 @@ class PasswordResetView(View):
 	def get(self, request):
 		if request.user.is_authenticated:
 			return HttpResponseRedirect(reverse('logout'))
-		pwd_reset_form = PasswordResetForm()
+		pwd_reset_form = CaptchaPasswordResetForm()
 		return render(request, 'registration/password_reset.html', context={'password_reset_form': pwd_reset_form})
 
 	def post(self, request):
-		password_reset_form = PasswordResetForm(request.POST)
+		password_reset_form = CaptchaPasswordResetForm(request.POST)
 		if password_reset_form.is_valid():
 			email = password_reset_form.cleaned_data['email']
 			users = SiteUser.objects.filter(Q(email=email))
@@ -221,8 +229,16 @@ class PasswordResetView(View):
 						'token': default_token_generator.make_token(user),
 					}
 					html_content = html_temp.render(c)
+					text_content = strip_tags(html_content)
+					email = EmailMultiAlternatives(
+						subject,
+						text_content,
+						f"noreply@{config.settings.ROOT_DOMAIN}",
+						[user.email]
+					)
+					email.attach_alternative(html_content, 'text/html')
 					try:
-						send_mail(subject, html_content, f"noreply@{config.settings.ROOT_DOMAIN}", [user.email])
+						email.send()
 						return HttpResponseRedirect(reverse('password-reset-done'))
 					except BadHeaderError:
 						return HttpResponse('Invalid header found.')

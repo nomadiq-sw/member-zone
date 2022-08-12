@@ -5,7 +5,7 @@
 {% else %}
   {% for membership in object_list %}
     <tr class="h-auto">
-      <th class="dropdown dropdown-right dropdown-end mt-1 -mb-1">
+      <th class="dropdown dropdown-right dropdown-end mt-1 -mb-1 border-0">
         <label tabindex="0"><a class="link cursor-pointer">{{ membership.membership_name }}</a></label>
         <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-24">
           <li>
@@ -23,16 +23,16 @@
           </li>
         </ul>
       </th>
-      <td>{{ membership.membership_type|title }}</td>
-      <td>{{ membership.renewal_date }}</td>
-      <td class="hidden sm:table-cell items-center">
+      <td class="border-0">{{ membership.membership_type|title }}</td>
+      <td class="border-0">{{ membership.renewal_date }}</td>
+      <td class="hidden sm:table-cell items-center border-0">
         <input type="checkbox"
                class="checkbox checkbox-primary border-gray-400 mt-1"
                {% if membership.reminder %}checked{% endif %}
                hx-patch="{% url 'toggle-reminders' membership.pk %}"
                hx-swap="none"/>
       </td>
-      <td class="pl-2 pr-0 hidden sm:table-cell">{{ membership.cost }}</td>
+      <td class="pl-2 pr-0 hidden sm:table-cell border-0">{{ membership.cost }}</td>
     </tr>
   {% endfor %}
 {% endif %}
