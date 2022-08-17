@@ -29,7 +29,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
@@ -47,7 +46,7 @@ RECAPTCHA_REQUIRED_SCORE = 0.5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1', 'member-zone.herokuapp.com', 'member-zone.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'member-zone.herokuapp.com', 'member-zone.net']
 
 PROTOCOL = 'https'
 
