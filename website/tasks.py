@@ -16,10 +16,9 @@ from django.db import transaction
 from django.template.loader import get_template
 from django.core.mail import send_mail, BadHeaderError, EmailMultiAlternatives
 from smtplib import SMTPException
-
 from django.utils.html import strip_tags
+from django.conf import settings
 
-import config.settings
 from .models import Membership, SiteUser
 from celery.utils.log import get_task_logger
 
@@ -118,7 +117,7 @@ def reminder_emails():
 				email = EmailMultiAlternatives(
 					subject,
 					text_content,
-					f"noreply@{config.settings.ROOT_DOMAIN}",
+					f"noreply@{settings.ROOT_DOMAIN}",
 					[user.email]
 				)
 				email.attach_alternative(renewal_mail, 'text/html')
@@ -134,7 +133,7 @@ def reminder_emails():
 				email = EmailMultiAlternatives(
 					subject,
 					text_content,
-					f"noreply@{config.settings.ROOT_DOMAIN}",
+					f"noreply@{settings.ROOT_DOMAIN}",
 					[user.email]
 				)
 				email.attach_alternative(free_trial_mail, 'text/html')
@@ -151,8 +150,8 @@ def html_renewal_email(user):
 	if user_reminders.count() != 0:
 		html_temp = get_template('reminders/membership_renewal_reminder_email.html')
 		c = {
-			'protocol': config.settings.PROTOCOL,
-			'domain': config.settings.DOMAIN,
+			'protocol': settings.PROTOCOL,
+			'domain': settings.DOMAIN,
 			'items': user_reminders.all(),
 		}
 		return html_temp.render(c)
@@ -165,8 +164,8 @@ def html_free_trial_expiry_email(user):
 	if user_reminders.count() != 0:
 		html_temp = get_template('reminders/free_trial_expiry_reminder_email.html')
 		c = {
-			'protocol': config.settings.PROTOCOL,
-			'domain': config.settings.DOMAIN,
+			'protocol': settings.PROTOCOL,
+			'domain': settings.DOMAIN,
 			'items': user_reminders.all(),
 		}
 		return html_temp.render(c)

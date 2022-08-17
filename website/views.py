@@ -26,8 +26,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.db.models.query_utils import Q
 from django.db.models.functions import Lower
+from django.conf import settings
 
-import config.settings
 from .forms import UserRegistrationForm, UserLoginForm, MembershipEditForm, ContactForm, CaptchaPasswordResetForm
 from .models import SiteUser, Membership
 
@@ -140,8 +140,8 @@ def submit_query(request):
 				send_mail(
 					subject,
 					txt_content,
-					f"admin@{config.settings.ROOT_DOMAIN}",
-					[config.settings.EMAIL_HOST_USER]
+					f"admin@{settings.ROOT_DOMAIN}",
+					[settings.EMAIL_HOST_USER],
 				)
 				reuse = {'email': data['email']}
 				response = render(request, 'partials/contact-form.html', {'form': ContactForm(initial=reuse)})
@@ -174,15 +174,15 @@ class LoginSignupView(View):
 					subject = "Welcome to MemberZone"
 					html_temp = get_template('registration/user_welcome_email.html')
 					c = {
-						'protocol': config.settings.PROTOCOL,
-						'domain': config.settings.DOMAIN,
+						'protocol': settings.PROTOCOL,
+						'domain': settings.DOMAIN,
 					}
 					html_content = html_temp.render(c)
 					text_content = strip_tags(html_content)
 					email = EmailMultiAlternatives(
 						subject,
 						text_content,
-						f"noreply@{config.settings.ROOT_DOMAIN}",
+						f"noreply@{settings.ROOT_DOMAIN}",
 						[user.email]
 					)
 					email.attach_alternative(html_content, 'text/html')
@@ -223,8 +223,8 @@ class PasswordResetView(View):
 					subject = "Password reset requested"
 					html_temp = get_template('registration/password_reset_email.html')
 					c = {
-						'protocol': config.settings.PROTOCOL,
-						'domain': config.settings.DOMAIN,
+						'protocol': settings.PROTOCOL,
+						'domain': settings.DOMAIN,
 						"uid": urlsafe_base64_encode(force_bytes(user.pk)),
 						'token': default_token_generator.make_token(user),
 					}
@@ -233,7 +233,7 @@ class PasswordResetView(View):
 					email = EmailMultiAlternatives(
 						subject,
 						text_content,
-						f"noreply@{config.settings.ROOT_DOMAIN}",
+						f"noreply@{settings.ROOT_DOMAIN}",
 						[user.email]
 					)
 					email.attach_alternative(html_content, 'text/html')
@@ -250,9 +250,9 @@ class PasswordResetView(View):
 
 class TermsAndConditionsView(TemplateView):
 	template_name = 'terms-conditions.html'
-	extra_context = {'domain': config.settings.DOMAIN, 'root_domain': config.settings.ROOT_DOMAIN}
+	extra_context = {'domain': settings.DOMAIN, 'root_domain': settings.ROOT_DOMAIN}
 
 
 class PrivacyPolicyView(TemplateView):
 	template_name = 'privacy-policy.html'
-	extra_context = {'domain': config.settings.DOMAIN, 'root_domain': config.settings.ROOT_DOMAIN}
+	extra_context = {'domain': settings.DOMAIN, 'root_domain': settings.ROOT_DOMAIN}

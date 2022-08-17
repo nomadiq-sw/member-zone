@@ -2,10 +2,10 @@
 #
 # This file is part of MemberZone.
 #
-# MemberZone is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License 
+# MemberZone is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License
 # as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 #
-# MemberZone is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty 
+# MemberZone is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty
 # of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License along with MemberZone. If not, see <https://www.gnu.org/licenses/>.
@@ -21,36 +21,27 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 import os
-import django_heroku
-import dj_database_url
 from pathlib import Path
-from dotenv import load_dotenv
-
-load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+BASE_DIR = Path(__file__).resolve().parent.parent
 
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = str(os.getenv('SECRET_KEY'))
-
-RECAPTCHA_PUBLIC_KEY = str(os.getenv('RECAPTCHA_SITE_KEY'))
-RECAPTCHA_PRIVATE_KEY = str(os.getenv('RECAPTCHA_SECRET_KEY'))
-RECAPTCHA_REQUIRED_SCORE = 0.5
+SECRET_KEY = 'django-insecure-5+7dtxe3%%+rlvoejx2_*&no354o+a7ve^p9v*ozb7*gokty!v'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['member-zone.herokuapp.com', 'member-zone.net']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
-PROTOCOL = 'https'
+PROTOCOL = 'http'
 
-DOMAIN = "www.member-zone.net"
+DOMAIN = "127.0.0.1:8000"
 ROOT_DOMAIN = "member-zone.net"
 
 APPEND_SLASH = False
@@ -64,6 +55,7 @@ INSTALLED_APPS = [
 	'website',
 	'tailwind',
 	'theme',
+	'captcha',
 	'django_htmx',
 	'widget_tweaks',
 	'crispy_forms',
@@ -76,14 +68,11 @@ INSTALLED_APPS = [
 	'django.contrib.messages',
 	'django.contrib.staticfiles',
 	'djmoney',
-	'captcha',
 	'django_celery_beat',
-	'whitenoise.runserver_nostatic',
 ]
 
 MIDDLEWARE = [
 	'django.middleware.security.SecurityMiddleware',
-	'whitenoise.middleware.WhiteNoiseMiddleware',
 	'django.contrib.sessions.middleware.SessionMiddleware',
 	'django.middleware.common.CommonMiddleware',
 	'django.middleware.csrf.CsrfViewMiddleware',
@@ -114,12 +103,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = str(os.getenv('EMAIL_HOST_USER'))
-EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST_USER = 'user@email.com'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -127,12 +112,9 @@ EMAIL_HOST_PASSWORD = str(os.getenv('EMAIL_HOST_PASSWORD'))
 DATABASES = {
 	'default': {
 		'ENGINE': 'django.db.backends.sqlite3',
-		'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+		'NAME': BASE_DIR / 'db.sqlite3',
 	}
 }
-
-db_from_env = dj_database_url.config(default=str(os.getenv('DATABASE_URL')), conn_max_age=600, ssl_require=True)
-DATABASES['default'].update(db_from_env)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
@@ -201,10 +183,7 @@ CRISPY_TEMPLATE_PACK = 'tailwind'
 
 TAILWIND_APP_NAME = 'theme'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATIC_URL = '/static/'
-
-STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -213,11 +192,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Celery configuration
 
-CELERY_BROKER_URL = str(os.getenv('REDIS_URL'))
-CELERY_RESULT_BACKEND = str(os.getenv('REDIS_URL'))
+CELERY_BROKER_URL = 'redis://127.0.0.1:6379'
+CELERY_RESULT_BACKEND = 'redis://127.0.0.1:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
-
-django_heroku.settings(locals())

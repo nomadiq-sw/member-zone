@@ -9,6 +9,7 @@
 # of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
 #
 # You should have received a copy of the GNU Affero General Public License along with MemberZone. If not, see <https://www.gnu.org/licenses/>.
+import os
 import datetime
 from django import forms
 from django.contrib.auth import authenticate
@@ -36,11 +37,15 @@ help_items = format_html(
 # Create your forms here.
 class UserRegistrationForm(UserCreationForm):
 	email = forms.EmailField(required=True)
-	captcha = ReCaptchaField(label='', label_suffix='', widget=ReCaptchaV3)
+	if os.environ['DJANGO_SETTINGS_MODULE'] != 'config.test_settings':
+		captcha = ReCaptchaField(label='', label_suffix='', widget=ReCaptchaV3)
 
 	class Meta:
 		model = SiteUser
-		fields = ('email', 'password1', 'password2', 'captcha')
+		if os.environ['DJANGO_SETTINGS_MODULE'] == 'config.test_settings':
+			fields = ('email', 'password1', 'password2')
+		else:
+			fields = ('email', 'password1', 'password2', 'captcha')
 
 	def __init__(self, *args, **kwargs):
 		super().__init__(*args, **kwargs)
@@ -62,7 +67,7 @@ class UserLoginForm(AuthenticationForm):
 
 	class Meta:
 		model = SiteUser
-		fields = {'email', 'password'}
+		fields = ('email', 'password')
 
 	def clean(self):
 		email = self.cleaned_data['username'].lower()  # Note that form returns 'username' despite model using 'email'
@@ -141,11 +146,16 @@ class ContactForm(forms.Form):
 	email = forms.EmailField(required=True, label="Your e-mail")
 	subject = forms.CharField(required=True, max_length=50)
 	message = forms.CharField(required=True, max_length=400, widget=forms.Textarea)
-	captcha = ReCaptchaField(label='', label_suffix='', widget=ReCaptchaV3)
+	if os.environ['DJANGO_SETTINGS_MODULE'] != 'config.test_settings':
+		captcha = ReCaptchaField(label='', label_suffix='', widget=ReCaptchaV3)
 
 
 class CaptchaPasswordResetForm(PasswordResetForm):
-	captcha = ReCaptchaField(label='', label_suffix='', widget=ReCaptchaV3)
+	if os.environ['DJANGO_SETTINGS_MODULE'] != 'config.test_settings':
+		captcha = ReCaptchaField(label='', label_suffix='', widget=ReCaptchaV3)
 
 	class Meta:
-		fields = {'email', 'captcha'}
+		if os.environ['DJANGO_SETTINGS_MODULE'] == 'config.test_settings':
+			fields = ('email',)
+		else:
+			fields = ('email', 'captcha')

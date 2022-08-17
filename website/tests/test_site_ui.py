@@ -117,7 +117,6 @@ class TestUserRegistrationFormSuccess(StaticLiveServerTestCase):
 		self.register = self.driver.find_element(By.XPATH, ".//input[@value='Register' and @type='submit']")
 
 	def test_new_user_success(self):
-
 		self.new_user_email.send_keys("pedro.gomez@realtalk.com")
 		self.new_user_pwd1.send_keys("86743909dba")
 		self.new_user_pwd2.send_keys("86743909dba")
@@ -233,7 +232,7 @@ class TestPasswordResetForm(StaticLiveServerTestCase):
 			self.assertURLEqual(self.driver.current_url, self.live_server_url + '/password-reset/done')
 			self.assertEqual(len(mail.outbox), 1)
 			self.assertEqual(mail.outbox[0].subject, "Password reset requested")
-			email_content = mail.outbox[0].body
+			email_content = mail.outbox[0].alternatives[0][0]
 			user = SiteUser.objects.get(email="juan.gomez@realtalk.com")
 			uid = urlsafe_base64_encode(force_bytes(user.pk))
 			uid_token_regex = r"password-reset\/" + re.escape(uid) + r"\/([A-Za-z0-9:\-]+)"
