@@ -16,10 +16,6 @@ The project is built using the Django framework, including templates, views and 
   - Whitenoise for managing and serving static files
   - Pytest and Selenium Webdriver for testing
 
-## Known issues
-  - The suite of tests (run with the `pytest` command) is currently pretty flaky, and doesn't pass in the production environment
-  (even though the full functionality which the tests are supposed to cover has been confirmed to work). I will work on this when I have time.
-
 ## Contributing
 If you discover a problem with the code or want to suggest an improvement, feel free to open an issue here on GitHub.
 Additionally, you can open a pull request with your proposed changes.
