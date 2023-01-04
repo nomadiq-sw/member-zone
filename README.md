@@ -3,7 +3,7 @@ A minimalist site to keep track of your memberships and subscriptions
 
 ## About the project
 MemberZone is a personal hobby project which I chose to develop to deepen my understanding of and familiarity with the Django framework.
-~~It is hosted on Heroku, with Cloudflare providing the domain [www.member-zone.net]() and related DNS and ancillary services~~ EDIT: due to the increased cost of Heroku hosting, the site is now offline.
+~~It is hosted on Heroku, with Cloudflare providing the domain www.member-zone.net and related DNS and ancillary services~~ EDIT: due to the increased cost of Heroku hosting, the site is now offline.
 
 The source code is freely available to use, modify and distribute under the terms of the AGPLv3 licence.
 
