@@ -84,6 +84,7 @@ def toggle_reminders(request, pk):
 		if membership.user == request.user:
 			membership.reminder = not membership.reminder
 			membership.save()
+		return HttpResponse()
 
 
 class DeleteMembershipView(LoginRequiredMixin, DeleteView):
